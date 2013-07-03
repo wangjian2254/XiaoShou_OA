@@ -1,0 +1,382 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="{{STATIC_URL}}css/css.css" rel="stylesheet" type="text/css">
+<link href="{{STATIC_URL}}css/hepu.css" rel="stylesheet" type="text/css">
+	<script language="javascript" src="{{STATIC_URL}}js/menu.js"></script>
+
+	
+	<script>
+	function closeMenus() {
+		Expand()
+		//Toggle('serversettings');
+		//Toggle('dataservices');
+		
+	}
+	function highlightLink(clickedLink) {
+		menuitemArray = document.getElementsByName('menuitem');
+		for (i=0;i<menuitemArray.length;i++) {
+			if (menuitemArray[i].className == 'leftMenuLinkTextHighlighted')
+				menuitemArray[i].className='leftMenuLinkText';
+		}
+		clickedLink.className='leftMenuLinkTextHighlighted';
+		//alert(frames.parent.frames['content'].location);
+	}
+	var highlightTimeout;
+	function highlightLinkOnload() {
+		// if the frame hasn't loaded yet (firefox issue)... keep calling the same function every second until it does and then clear the timeout
+		if (frames.parent.frames['mainFrame'].location == 'about:blank') {
+			highlightTimeout = setTimeout("highlightLinkOnload()",1000);// keep calling while it's blank...
+		} else {
+			clearTimeout(highlightTimeout);
+		}
+		menuitemArray = document.getElementsByName('menuitem');
+		for (i=0;i<menuitemArray.length;i++) {
+			if (frames.parent.frames['mainFrame'].location.toString().split('?')[0] == menuitemArray[i].href) {
+				menuitemArray[i].className='leftMenuLinkTextHighlighted';
+				if (menuitemArray[i].getAttribute('menuitemparent')!= 'management')
+					Toggle(menuitemArray[i].getAttribute('menuitemparent'));
+			}
+		}
+	}
+	</script>
+
+</head>
+
+
+<body style="background: #ececec url('{{STATIC_URL}}image/navframebackground.png') repeat-y;" onLoad="closeMenus();highlightLinkOnload();">
+
+<style>
+	h2{font-size: 1em;	}
+</style>
+
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+  <tr>
+	<td rowspan="3"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="10" height="10"></td>
+	<td>&nbsp;</td>
+	<td rowspan="3"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="5" height="10"></td>
+  </tr>
+  <tr>
+	<td>
+			<table border="0" cellspacing="0" cellpadding="0">
+			  <tr>
+				<td><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="10" height="10"></td>
+			  </tr>
+			</table>
+		
+		<table class="menuBody">
+			  <tr>
+				<td class="menuTD" style="font-size:10px;">
+
+					<a class="leftMenuLinkText" style="font-size:10px;" href="javascript:Expand();">
+展开
+<img src="{{STATIC_URL}}image/expandallicon.gif" alt="" width="12" height="12" border="0" align="texttop"></a> /
+					<a class="leftMenuLinkText" style="font-size:10px;" href="javascript:Collapse();">
+收缩
+<img src="{{STATIC_URL}}image/collapseallicon.gif" alt="" width="12" height="12" border="0" align="texttop"></a>
+				</td>
+			</tr>
+		</table>
+            <!---我的办公桌 --->
+				<table class="menuHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+
+					<tr>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topleft.png" width="6" alt="" height="5"></td>
+						<td width="100%" background="{{STATIC_URL}}image/cap_menuitem_topbackground.png" ><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topright.png" alt="" width="6" height="5"></td>
+					</tr>
+					<tr>
+						<td class="menuTDHeaderLeft"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+						<td width="100%" class="menuTDHeader"><a id="xmanagement" href="javascript:Toggle('management');"><img src='{{STATIC_URL}}image/arrow_opened.gif'  width='10' height='10' hspace='0' vspace='0' border='0'></a><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="5" height="5"><a id="amanagement" href="javascript:Toggle('management');" class="menuheaderText">我的办公桌</a></td>
+
+						<td class="menuTDHeaderRight"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+					</tr>
+					<tr>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomleft.png" alt="" width="6" height="5"></td>
+						<td background="{{STATIC_URL}}image/cap_menuitem_bottombackground.png"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomright.png" alt="" width="6" height="5"></td>
+					</tr>
+				</table>
+				<div id="management">
+					<table class="menuBody" width="100%">
+								
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='management' href="/zt/dataadd">新员工录入</a></td>
+								</tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='management' href="/subscribeInfo">修改员工信息</a>	</td>
+								</tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='management' href="/subscribeInfo">员工离职</a>	</td>
+								</tr>
+
+								
+						</table>
+				</div>
+            <!---我的办公桌 end --->
+<!---厅台信息管理 --->
+
+				<table class="menuHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topleft.png" width="6" alt="" height="5"></td>
+						<td width="100%" background="{{STATIC_URL}}image/cap_menuitem_topbackground.png" ><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topright.png" alt="" width="6" height="5"></td>
+					</tr>
+					<tr>
+						<td class="menuTDHeaderLeft"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+						<td width="100%" class="menuTDHeader">
+						<a id="xserversettings" href="javascript:Toggle('serversettings');"><img src='{{STATIC_URL}}image/arrow_opened.gif'  width='10' height='10' hspace='0' vspace='0' border='0'></a><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="5" height="5"><a id="aserversettings" href="javascript:Toggle('serversettings');" class="menuheaderText">厅台信息管理</a>
+						</td>
+						<td class="menuTDHeaderRight">
+						<img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+
+					</tr>
+					<tr>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomleft.png" alt="" width="6" height="5"></td>
+						<td background="{{STATIC_URL}}image/cap_menuitem_bottombackground.png"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomright.png" alt="" width="6" height="5"></td>
+					</tr>
+				</table>
+				<div id="serversettings">
+					<table class="menuBody" width="100%">
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='serversettings' href="/photoLibList">录入新厅台</a></td>
+								</tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='serversettings' href="/TestMenu/">修改厅台信息</a></td>
+								</tr>
+
+																
+					</table>
+				</div>
+            <!---厅台信息管理 end --->
+<!---权限管理 --->
+
+
+				<table class="menuHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topleft.png" width="6" alt="" height="5"></td>
+						<td width="100%" background="{{STATIC_URL}}image/cap_menuitem_topbackground.png" ><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topright.png" alt="" width="6" height="5"></td>
+
+					</tr>
+					<tr>
+						<td class="menuTDHeaderLeft"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+						<td width="100%" class="menuTDHeader"><a id="xdataservices" href="javascript:Toggle('dataservices');"><img src='{{STATIC_URL}}image/arrow_opened.gif'  width='10' height='10' hspace='0' vspace='0' border='0'></a><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="5" height="5"><a id="adataservices" href="javascript:Toggle('dataservices');" class="menuheaderText">权限管理</a></td>
+						<td class="menuTDHeaderRight"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+					</tr>
+					<tr>
+
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomleft.png" alt="" width="6" height="5"></td>
+						<td background="{{STATIC_URL}}image/cap_menuitem_bottombackground.png"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomright.png" alt="" width="6" height="5"></td>
+					</tr>
+				</table>
+				<div id="dataservices">
+					<table class="menuBody" width="100%">
+								<tr>
+									<td class="menuTD" width="13"></td>
+
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='dataservices' href="/photoInfo/0">部门信息管理</a></td>
+								</tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='dataservices' href="/photoUpload">部门人员管理</a></td>
+								</tr>
+
+								
+					</table>
+				</div>
+            <!---权限管理 end--->
+<!---文档管理 --->
+
+
+				<table class="menuHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topleft.png" width="6" alt="" height="5"></td>
+						<td width="100%" background="{{STATIC_URL}}image/cap_menuitem_topbackground.png" ><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topright.png" alt="" width="6" height="5"></td>
+					</tr>
+					<tr>
+						<td class="menuTDHeaderLeft"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+						<td width="100%" class="menuTDHeader">
+						<a id="xdebugginglogging" href="javascript:Toggle('debugginglogging');"><img src='{{STATIC_URL}}image/arrow_opened.gif'  width='10' height='10' hspace='0' vspace='0' border='0'></a><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="5" height="5"><a id="adebugginglogging" href="javascript:Toggle('debugginglogging');" class="menuheaderText">文档管理</a></td>
+
+						<td class="menuTDHeaderRight"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+					</tr>
+					<tr>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomleft.png" alt="" width="6" height="5"></td>
+						<td background="{{STATIC_URL}}image/cap_menuitem_bottombackground.png"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomright.png" alt="" width="6" height="5"></td>
+					</tr>
+				</table>
+				<div id="debugginglogging">
+
+					<table class="menuBody" width="100%">
+								
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='debugginglogging' href="/userInfo">分类管理</a></td>
+								</tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='debugginglogging' href="/userAdd">文档录入</a></td>
+								</tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='debugginglogging' href="/userAdd">修改文档信息</a></td>
+								</tr>
+					</table>
+
+				</div>
+            <!---文档管理 end--->
+<!---考试管理 --->
+
+
+				<table class="menuHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+					<tr>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topleft.png" width="6" alt="" height="5"></td>
+						<td width="100%" background="{{STATIC_URL}}image/cap_menuitem_topbackground.png" ><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topright.png" alt="" width="6" height="5"></td>
+					</tr>
+
+					<tr>
+						<td class="menuTDHeaderLeft"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+						<td width="100%" class="menuTDHeader"><a id="xrightcolumn" href="javascript:Toggle('rightcolumn');"><img src='{{STATIC_URL}}image/arrow_opened.gif'  width='10' height='10' hspace='0' vspace='0' border='0'></a><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="5" height="5"><a id="arightcolumn" href="javascript:Toggle('rightcolumn');" class="menuheaderText">考试管理</a></td>
+						<td class="menuTDHeaderRight"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+					</tr>
+					<tr>
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomleft.png" alt="" width="6" height="5"></td>
+						<td background="{{STATIC_URL}}image/cap_menuitem_bottombackground.png"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+
+						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomright.png" alt="" width="6" height="5"></td>
+					</tr>
+				</table>
+				<div id="rightcolumn">
+					<table class="menuBody" width="100%">
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='rightcolumn' href="/userReplyList/0">添加试题</a>									</td>
+								</tr>
+								<tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='rightcolumn' href="/userReplyAdd">创建考卷</a>									</td>
+								</tr>
+                                <tr>
+									<td class="menuTD" width="13"></td>
+									<td class="menuTD">
+										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='rightcolumn' href="/userReplyAdd">修改考卷</a>									</td>
+								</tr>
+					</table>
+				</div>
+            <!---考试管理 end--->
+            <!---数据导出管理 --->
+
+
+            				<table class="menuHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+            					<tr>
+            						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topleft.png" width="6" alt="" height="5"></td>
+            						<td width="100%" background="{{STATIC_URL}}image/cap_menuitem_topbackground.png" ><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+            						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topright.png" alt="" width="6" height="5"></td>
+            					</tr>
+
+            					<tr>
+            						<td class="menuTDHeaderLeft"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+            						<td width="100%" class="menuTDHeader"><a id="xexceldaochu" href="javascript:Toggle('exceldaochu');"><img src='{{STATIC_URL}}image/arrow_opened.gif'  width='10' height='10' hspace='0' vspace='0' border='0'></a><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="5" height="5"><a id="aexceldaochu" href="javascript:Toggle('exceldaochu');" class="menuheaderText">数据导出</a></td>
+            						<td class="menuTDHeaderRight"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+            					</tr>
+            					<tr>
+            						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomleft.png" alt="" width="6" height="5"></td>
+            						<td background="{{STATIC_URL}}image/cap_menuitem_bottombackground.png"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+
+            						<td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomright.png" alt="" width="6" height="5"></td>
+            					</tr>
+            				</table>
+            				<div id="exceldaochu">
+            					<table class="menuBody" width="100%">
+            								<tr>
+            									<td class="menuTD" width="13"></td>
+            									<td class="menuTD">
+            										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='rightcolumn' href="/userReplyList/0">签到导出</a>									</td>
+            								</tr>
+            								<tr>
+            									<td class="menuTD" width="13"></td>
+            									<td class="menuTD">
+            										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='rightcolumn' href="/userReplyAdd">考试导出</a>									</td>
+            								</tr>
+                                            <tr>
+            									<td class="menuTD" width="13"></td>
+            									<td class="menuTD">
+            										<a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='rightcolumn' href="/userReplyAdd">销售导出</a>									</td>
+            								</tr>
+            					</table>
+            				</div>
+            <!---数据导出管理 end--->
+            <!---签到服务管理 --->
+
+
+                            <table class="menuHeader" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topleft.png" width="6" alt="" height="5"></td>
+                                    <td width="100%" background="{{STATIC_URL}}image/cap_menuitem_topbackground.png" ><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+                                    <td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_topright.png" alt="" width="6" height="5"></td>
+                                </tr>
+
+                                <tr>
+                                    <td class="menuTDHeaderLeft"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+                                    <td width="100%" class="menuTDHeader"><a id="xqiandao" href="javascript:Toggle('qiandao');"><img src='{{STATIC_URL}}image/arrow_opened.gif'  width='10' height='10' hspace='0' vspace='0' border='0'></a><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="5" height="5"><a id="aqiandao" href="javascript:Toggle('qiandao');" class="menuheaderText">签到服务管理</a></td>
+                                    <td class="menuTDHeaderRight"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="1" height="5"></td>
+                                </tr>
+                                <tr>
+                                    <td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomleft.png" alt="" width="6" height="5"></td>
+                                    <td background="{{STATIC_URL}}image/cap_menuitem_bottombackground.png"><img src="{{STATIC_URL}}image/spacer.gif" alt="" width="60" height="5"></td>
+
+                                    <td width="6"><img src="{{STATIC_URL}}image/cap_menuitem_bottomright.png" alt="" width="6" height="5"></td>
+                                </tr>
+                            </table>
+                            <div id="qiandao">
+                                <table class="menuBody" width="100%">
+                                            <tr>
+                                                <td class="menuTD" width="13"></td>
+                                                <td class="menuTD">
+                                                    <a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='rightcolumn' href="/userReplyList/0">添加签到服务</a>									</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="menuTD" width="13"></td>
+                                                <td class="menuTD">
+                                                    <a class="leftMenuLinkText" name="menuitem" target="mainFrame" onClick="highlightLink(this);" menuitemparent='rightcolumn' href="/userReplyAdd">修改签到服务</a>									</td>
+                                            </tr>
+                                </table>
+                            </div>
+            <!---签到服务管理 --->
+	</td>
+
+  </tr>
+</table>
+
+
+</body>
+
+</html>
