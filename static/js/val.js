@@ -15,6 +15,7 @@ function valSubmit(formid){
 		if(input.attributes.getNamedItem('val')==undefined){
 			continue;
 		}
+        //valdict=$j.parseJSON(input.attributes.getNamedItem('val').value.replace(/'/g,'"'));
 		valdict=JSON2.parse(input.attributes.getNamedItem('val').value.replace(/'/g,'"'));
 		if(valdict.required&&input.value==''){
 			art.dialog({title:'提示',content:valdict.title+' 不能为空！',icon:'warning',lock: true,ok:true});

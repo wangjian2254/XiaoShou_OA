@@ -16,32 +16,21 @@
 {% block content %}
 <form id="register"  method="post" action="/userAdd" onSubmit="checkTrue()">
 <div>
-    {% for i in num %}
-    <div style="width: 100px;height: 100px;display: block;float: left;margin: 5px;">
-        <a href="#"><img src="" alt="图标" width="80" height="80" border="0"></a>
-        <div><a href="#">XX功能</a></div>
-    </div>
-    {% endfor %}
-<div style="width: 100%;height: 100px;display: block;float: left;margin: 5px;text-align: left;">
-<span>今日签到服务统计：</span>
-    <p>上班签到</p>
-    <ul>
-        <li>
-            张三
-        </li>
-        <li style="color: red;">
-            张三2
-        </li>
-        <li>
-            张三4
-        </li>
-        <li>
-            张三5
-        </li>
-        <li>
-            张三6
-        </li>
-    </ul>
+{#    {% for i in num %}#}
+{#    <div style="width: 100px;height: 100px;display: block;float: left;margin: 5px;">#}
+{#        <a href="#"><img src="" alt="图标" width="80" height="80" border="0"></a>#}
+{#        <div><a href="#">XX功能</a></div>#}
+{#    </div>#}
+{#    {% endfor %}#}
+<div style="width: 100%;display: block;float: left;margin: 5px;text-align: left;">
+<p style="width: 100%;float: left;">常用功能：</p>
+<p style="float: left;margin:10px;"><a href="#">签到导出</a></p>
+<p style="float: left;margin:10px;"><a href="#">考试导出</a></p>
+<p style="float: left;margin:10px;"><a href="#">销售导出</a></p>
+<p style="width: 100%;float: left;">运行参数：</p>
+<p style="width: 100%;margin:10px;float: left;">今日参与销售员工数量：86人</p>
+<p style="width: 100%;margin:10px;float: left;">今日销售终端数量：816台</p>
+
 </div>
 </div>
   
