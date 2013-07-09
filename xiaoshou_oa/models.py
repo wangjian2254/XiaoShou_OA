@@ -95,28 +95,49 @@ class Score(models.Model):
 
 class ProductType(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'类型', help_text=u'')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
 class ProductBrands(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'品牌', help_text=u'')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
 class Contrack(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'合约名称', help_text=u'')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
+    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+
+
+class Gift(models.Model):
+    name = models.CharField(max_length=20, verbose_name=u'礼物名称', help_text=u'礼物的名称')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
 class ProductModel(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'机型名称', help_text=u'')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
     brands = models.ForeignKey(ProductBrands, verbose_name=u'机型的品牌', help_text=u'品牌的机型')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
 class Product(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'产品名称', help_text=u'产品的名称')
-    office = models.ForeignKey(Office, verbose_name=u'销售的厅台')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
+    productModel = models.ForeignKey(ProductModel, verbose_name=u'机型', help_text=u'机器型号')
+
+
+class ProductOrder(models.Model):
+    product = models.ForeignKey(Product, verbose_name=u'终端')
+    contrack = models.ForeignKey(Contrack, verbose_name=u'合约类型')
+    gift = models.ManyToManyField(Gift,verbose_name=u'配套礼品')
+
+    user = models.ForeignKey(User, verbose_name=u'用户')
+    office = models.ForeignKey(Office, verbose_name=u'厅台')
+
 
 
 
