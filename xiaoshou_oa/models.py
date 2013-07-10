@@ -51,15 +51,16 @@ class DocumentKind(models.Model):
 
 
 class Document(models.Model):
-    title = models.CharField(max_length=50, verbose_name=u'文档标题', help_text=u'文档的标题')
+    title = models.CharField(max_length=100, verbose_name=u'文档标题', help_text=u'文档的标题')
+    kind = models.ForeignKey(DocumentKind, verbose_name=u'文档分类')
     dateTime = models.DateTimeField(auto_created=True, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
     author = models.ForeignKey(User, verbose_name=u'作者', help_text=u'创建文档的人')
     show = models.IntegerField(default=1, verbose_name=u'浏览次数', help_text=u'浏览文档的次数')
+    content = models.TextField(blank=True, null=True, verbose_name=u'文档内容', help_text=u'文档内容的段')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
-class Content(models.Model):
-    content = models.TextField(blank=True, null=True, verbose_name=u'文档内容', help_text=u'文档内容的段')
+class DocumentImage(models.Model):
     img = models.ImageField(blank=True, null=True, upload_to='upload/images', verbose_name=u'图片')
     document = models.ForeignKey(Document, verbose_name=u'隶属文档')
     index = models.IntegerField(verbose_name=u'排序')
@@ -67,7 +68,6 @@ class Content(models.Model):
 
 class Topic(models.Model):
     title = models.CharField(max_length=200, verbose_name=u'题目', help_text=u'选择题的题目')
-    img = models.ImageField(blank=True, null=True, upload_to='upload/picture', verbose_name=u'图片')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
@@ -94,49 +94,45 @@ class Score(models.Model):
 
 
 class ProductType(models.Model):
-    name = models.CharField(max_length=20, verbose_name=u'类型', help_text=u'')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
+    name = models.CharField(max_length=20, verbose_name=u'类型', help_text=u'合约、裸机……')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
 class ProductBrands(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'品牌', help_text=u'')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
-
-
-class Contrack(models.Model):
-    name = models.CharField(max_length=20, verbose_name=u'合约名称', help_text=u'')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
 class Gift(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'礼物名称', help_text=u'礼物的名称')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
 class ProductModel(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'机型名称', help_text=u'')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     brands = models.ForeignKey(ProductBrands, verbose_name=u'机型的品牌', help_text=u'品牌的机型')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
 class Product(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'产品名称', help_text=u'产品的名称')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记',help_text=u'从其他系统导入的数据的id')
+    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     productModel = models.ForeignKey(ProductModel, verbose_name=u'机型', help_text=u'机器型号')
 
 
 class ProductOrder(models.Model):
     product = models.ForeignKey(Product, verbose_name=u'终端')
-    contrack = models.ForeignKey(Contrack, verbose_name=u'合约类型')
-    gift = models.ManyToManyField(Gift,verbose_name=u'配套礼品')
-
+    type = models.ForeignKey(ProductType, verbose_name=u'合约类型')
+    gift = models.ManyToManyField(Gift, verbose_name=u'配套礼品')
     user = models.ForeignKey(User, verbose_name=u'用户')
     office = models.ForeignKey(Office, verbose_name=u'厅台')
+    imie = models.CharField(max_length=30, unique=True, verbose_name=u'imie', help_text=u'每个手机唯一')
+    tel = models.CharField(max_length=15, verbose_name=u'客户手机号', help_text=u'客户的联系方式')
+    orderNumber = models.CharField(max_length=50, verbose_name=u'订单id', help_text=u'同一次提交，保持一致')
 
 
 
