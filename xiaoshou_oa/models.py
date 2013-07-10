@@ -26,8 +26,8 @@ class Person(models.Model):
 class Office(models.Model):
     name = models.CharField(unique=True, max_length=30, verbose_name=u'厅台名称', help_text=u'厅台的名称')
     flag = models.CharField(unique=True, max_length=30, verbose_name=u'厅台字母缩写', help_text=u'厅台字母缩写，唯一')
-    gps = models.CharField(max_length=100, verbose_name=u'gps信息', help_text=u'厅台的gps信息')
-    address = models.CharField(max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
+    gps = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'gps信息', help_text=u'厅台的gps信息')
+    address = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
