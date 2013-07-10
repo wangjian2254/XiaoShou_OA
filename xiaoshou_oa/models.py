@@ -8,7 +8,7 @@ from django.db import models
 
 class Depatement(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'职位后缀名称', help_text=u'部门的名称')
-    manager = models.ForeignKey(User, related_name=u'department_manager', verbose_name=u'管理者', help_text=u'部门管理者')
+    manager = models.ForeignKey(User, blank=True,null=True, related_name=u'department_manager', verbose_name=u'管理者', help_text=u'部门管理者')
     fatherDepart = models.ForeignKey('Depatement', blank=True, null=True, related_name=u'department_father',
                                      verbose_name=u'父级部门', help_text=u'部门隶属关系')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
@@ -20,12 +20,14 @@ class Depatement(models.Model):
 class Person(models.Model):
     user = models.OneToOneField(User)
     sex = models.BooleanField(default=True, verbose_name=u'性别', help_text=u'性别')
-    depate = models.ForeignKey(Depatement, related_name=u'user_depart', verbose_name=u'隶属部门', help_text=u'员工隶属的部门')
-
+    depate = models.ForeignKey(Depatement, blank=True,null=True, related_name=u'user_depate', verbose_name=u'隶属部门', help_text=u'员工隶属的部门')
+    tel = models.CharField(max_length=15, verbose_name=u'电话')
 
 class Office(models.Model):
     name = models.CharField(unique=True, max_length=30, verbose_name=u'厅台名称', help_text=u'厅台的名称')
+    flag = models.CharField(unique=True, max_length=30, verbose_name=u'厅台字母缩写', help_text=u'厅台字母缩写，唯一')
     gps = models.CharField(max_length=100, verbose_name=u'gps信息', help_text=u'厅台的gps信息')
+    address = models.CharField(max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
@@ -33,6 +35,7 @@ class QianDao(models.Model):
     name = models.CharField(unique=True, verbose_name=u'名称', help_text=u'签到服务的名称')
     needTime = models.BooleanField(default=True, verbose_name=u'需要时间', help_text=u'是否需要时间')
     needGPS = models.BooleanField(default=True, verbose_name=u'需要GPS', help_text=u'是否GPS信息')
+    needAddress = models.BooleanField(default=True, verbose_name=u'需要街道地址', help_text=u'是否需要街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
@@ -41,7 +44,8 @@ class UserQianDao(models.Model):
     qiandao = models.ForeignKey(QianDao, verbose_name=u'签到项目', help_text=u'进行签到的项目，上班、下班等等')
     dateTime = models.DateTimeField(auto_created=True, verbose_name=u'签到发生时间', help_text=u'提交到服务器上的时间')
     gps = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'gps信息', help_text=u'手机端获取的gps信息')
-    office = models.ForeignKey(Office, verbose_name=u'签到厅台', help_text=u'签到的位置')
+    office = models.ForeignKey(Office, blank=True, null=True, verbose_name=u'签到厅台', help_text=u'签到的位置')
+    address = models.CharField(max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
@@ -61,7 +65,7 @@ class Document(models.Model):
 
 
 class DocumentImage(models.Model):
-    img = models.ImageField(blank=True, null=True, upload_to='upload/images', verbose_name=u'图片')
+    img = models.ImageField(blank=True, null=True, upload_to='media/upload/images', verbose_name=u'图片')
     document = models.ForeignKey(Document, verbose_name=u'隶属文档')
     index = models.IntegerField(verbose_name=u'排序')
 
@@ -133,6 +137,10 @@ class ProductOrder(models.Model):
     imie = models.CharField(max_length=30, unique=True, verbose_name=u'imie', help_text=u'每个手机唯一')
     tel = models.CharField(max_length=15, verbose_name=u'客户手机号', help_text=u'客户的联系方式')
     orderNumber = models.CharField(max_length=50, verbose_name=u'订单id', help_text=u'同一次提交，保持一致')
+
+    serverDate = models.CharField(max_length=10, verbose_name=u'服务器端日期', help_text=u'2013-06-07')
+    clientDate = models.CharField(max_length=10, verbose_name=u'客户端日期', help_text=u'2013-07-09')
+    clientTime = models.CharField(max_length=10, verbose_name=u'客户端时间', help_text=u'14:30')
 
 
 

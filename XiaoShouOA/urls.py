@@ -4,7 +4,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
 from XiaoShouOA import settings
-from xiaoshou_oa.views import default
+from xiaoshou_oa.views_user import default
 
 admin.autodiscover()
 
