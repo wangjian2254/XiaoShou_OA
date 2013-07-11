@@ -1,0 +1,92 @@
+{% extends "base/basepage.html" %}
+{% block js %}
+<script type="text/javascript">
+function username_change(name,id){
+   var username= $j('#'+id).val();
+    if(!username){
+        return;
+    }
+    var param=new Object();
+    param[name]=username;
+    $j.get('/oa/check_office/',param,function(data){
+        if(typeof data =='string'){
+            data=JSON2.parse(data);
+        }
+        if(data.success){
+            document.getElementById(name+"_error").className="green_star";
+            $j('#'+name+'_error').html('OK. "'+username+'" 可用。')
+        }else{
+            document.getElementById("username_error").className="red_star";
+            $j('#'+name+'_error').html('"'+username+'" '+data.message);
+        }
+    });
+
+}
+</script>
+<style type="text/css">
+.STYLE1 {
+	height:25px;
+	background-color:#ffffff;
+}
+</style>
+{% endblock %}
+{% block body %}
+<body onLoad=""  style="background:#ececec">
+{% endblock %}
+{% block navigator %}
+<a  href="javascript:void(0);">厅台管理</a> >><a  href="/oa/officeAdd/">添加新厅台</a>  >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<form id="register"  method="post" action="/oa/officeSave/" onsubmit="return valSubmit('register','autosubmit','officeid');">
+<input type="hidden" id="officeid" name="officeid" {% if office %}value="{{ office.id }}"{% endif %}/>
+<div>
+    <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+      <tr  bgcolor="#ffffff">
+        <td style="padding-left:5px;"  width="100px" >厅台名称:</td>
+
+        <td>
+          <input type="text" id="name" name="name"  onchange="username_change('name','name')" onblur="username_change('name','name')"   val="{'required':true,'title':'厅台名称'}" value="{{office.name}}" style="width:300px;"/>  <span class="red_star">*</span><span class="red_star" id="name_error"></span>  </td>
+      </tr>
+
+      <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >厅台唯一标记:</td>
+
+        <td>
+    	  <input type="text" id="flag" name="flag" onchange="username_change('flag','flag')" onblur="username_change('flag','flag')"  val="{'required':true,'title':'厅台唯一标记'}"   value="{{office.flag}}"  style="width:300px;"/><span class="red_star">*</span><span class="red_star" id="flag_error"></span> 	</td>
+      </tr>
+        <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >厅台gps信息:</td>
+
+        <td>
+    	  <span class="red_star">如果需要厅台gps信息，应由主管的手机实地采集，上传至服务器</span></td>
+      </tr>
+        </tr>
+        <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >厅台街道地址信息:</td>
+
+        <td>
+    	  <span class="red_star">如果需要厅台街道地址信息，应由主管的手机实地采集，上传至服务器</span></td>
+      </tr>
+    {% if office %}
+      </tr>
+        </tr>
+        <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >厅台是否可用:</td>
+
+        <td>
+    	  <span class="red_star">{% if office.isdel %}已删除{% else %}可用{% endif %}</span></td>
+      </tr>
+    {% endif %}
+      <tr bgcolor="#ffffff" >
+        <td  align="left"  style="padding-left:25px;" colspan="2" >
+          <input type="submit" name="Submit" value="确定"/>
+    	  <input type="reset" name="Reset" value="重置"/>
+    	  <input type="button" name="Return" value="返回" onClick="javascript:history.back(-1);" />
+
+        </td>
+      </tr>
+    </table>
+
+</div>
+</form>
+{% endblock %}

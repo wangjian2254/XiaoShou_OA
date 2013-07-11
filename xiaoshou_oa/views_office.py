@@ -23,6 +23,24 @@ def officeAdd(request):
         office=Office.objects.get(pk=id)
     return render_to_response('oa/officeSave.html',RequestContext(request,{'office':office}))
 
+
+@login_required
+def check_office(request):
+    name = request.REQUEST.get('name')
+    if name:
+        count = Office.objects.filter(name=name).count()
+        if count>0:
+            return getResult(False,u'名称已经注册过了')
+        else:
+            return getResult(True,u'名称可用')
+    flag = request.REQUEST.get('flag')
+    if flag:
+        count = Office.objects.filter(flag=flag).count()
+        if count>0:
+            return getResult(False,u'标记已经被注册过了')
+        else:
+            return getResult(True,u'标记可用')
+
 @login_required
 def officeSave(request):
     '''
@@ -37,18 +55,21 @@ def officeSave(request):
 
     if id:
         office = Office.objects.get(pk=id)
-
+        msg=u'修改厅台成功。'
     else:
         office = Office()
+        msg=u'添加厅台成功。'
     office.name=name
     office.flag=flag
     if gps:
         office.gps=gps
     if address:
         office.address=address
-    office.save()
-
-    return getResult(True,u'操作成功')
+    try:
+        office.save()
+    except:
+        return getResult(False,u'操作失败，信息不正确')
+    return getResult(True,msg ,office.id)
 
 @login_required
 def officeDelete(request):
@@ -69,22 +90,42 @@ def officeDelete(request):
 
 
 @login_required
+def officeOpen(request):
+    '''
+    离职用户
+    '''
+    id=request.REQUEST.get('officeid')
+    if id:
+        try:
+            office = Office.objects.get(pk=id)
+
+            office.isdel=False
+            office.save()
+            return getResult(True,u'启用厅台成功')
+        except:
+            return getResult(False,u'厅台不存在')
+    return getResult(False,u'请传递厅台id')
+
+
+@login_required
 def officeList(request):
     return render_to_response('oa/officeList.html',RequestContext(request,{'officelist':Office.objects.all()}))
 
-def officeUploadGPS(request):
-    username = request.REQUEST.get('username')
-    password = request.REQUEST.get('password')
 
-    if username and password:
-        user = User.objects.filter(username=username)[:1]
-        if len(user)>0:
-            user=user[0]
-            count = Depatement.objects.filter(manager=user).count()
-            if count==0:
-                getResult(False,u'不具备权限')
-        else:
-            return getResult(False,u'不具备权限')
+@login_required
+def officeUploadGPS(request):
+    # username = request.REQUEST.get('username')
+    # password = request.REQUEST.get('password')
+    user=request.user
+    if user:
+        # user = User.objects.filter(username=username)[:1]
+        # if len(user)>0:
+        #     user=user[0]
+        count = Depatement.objects.filter(manager=user).count()
+        if count==0:
+            getResult(False,u'不具备权限')
+        # else:
+        #     return getResult(False,u'不具备权限')
 
     flag = request.REQUEST.get('flag')
     id = request.REQUEST.get('officeid')
