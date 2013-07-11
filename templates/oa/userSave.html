@@ -43,7 +43,7 @@ function username_change(){
         <td style="padding-left:5px;"  width="100px" >员工ID:</td>
 
         <td>
-          <input type="text" id="ygbh" name="ygbh" onchange="username_change()" onblur="username_change()"   val="{'required':true,'title':'员工ID'}" value="{{person.username}}" style="width:300px;"/>  <span class="red_star">*</span><span class="red_star" id="username_error"></span>  </td>
+          <input type="text" id="ygbh" name="ygbh" {% if person %}readonly="true" {% endif %} onchange="username_change()" onblur="username_change()"   val="{'required':true,'title':'员工ID'}" value="{{person.username}}" style="width:300px;"/>  <span class="red_star">*</span><span class="red_star" id="username_error"></span>  </td>
       </tr>
 
       <tr bgcolor="#ffffff" >
@@ -87,7 +87,5 @@ function username_change(){
     </table>
 
 </div>
-</div>
-  
 </form>
 {% endblock %}

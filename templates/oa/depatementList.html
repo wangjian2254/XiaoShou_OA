@@ -1,0 +1,86 @@
+{% extends "base/basepage.html" %}
+{% block js %}
+<script type="text/javascript">
+    function deluser(username,fullname,userid){
+                art.dialog({id:'msg',title:'提示',content:"是否将职务“"+username+":"+fullname+"”设置为“不可用”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
+               	                     $j.post('/oa/depatementDelete/?depatementid='+userid,null,function(data){
+                                        if(typeof data == 'string'){
+                                            data=JSON2.parse(data);
+                                        }
+                                        if(data.success){
+                                            result_alert2("succeed",data.message);
+                                            $j('#del'+userid)[0].style['display']='none';
+                                            $j('#open'+userid)[0].style['display']='block';
+                                        }else{
+                                            result_alert2("warning",data.message);
+                                        }
+                                     });
+                }});
+            }
+            function openuser(username,fullname,userid){
+                art.dialog({id:'msg',title:'提示',content:"是否将职务“"+username+":"+fullname+"”设置为“可用”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
+               	                     $j.post('/oa/depatementOpen/?depatementid='+userid,null,function(data){
+                                        if(typeof data == 'string'){
+                                            data=JSON2.parse(data);
+                                        }
+                                        if(data.success){
+                                            result_alert2("succeed",data.message);
+                                            $j('#del'+userid)[0].style['display']='block';
+                                            $j('#open'+userid)[0].style['display']='none'
+                                        }else{
+                                            result_alert2("warning",data.message);
+                                        }
+                                     });
+               	                 }});
+
+            }
+
+
+</script>
+<style type="text/css">
+.STYLE1 {
+	height:25px;
+	background-color:#ffffff;
+}
+</style>
+{% endblock %}
+{% block body %}
+<body onLoad=""  style="background:#ececec">
+{% endblock %}
+{% block navigator %}
+<a  href="javascript:void(0);">员工管理</a> >><a  href="/oa/userAdd">添加新用户</a>  >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<form id="register"  method="get" action="/oa/userListPage/" target="userlist" >
+<div>
+
+    <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+        <tr  bgcolor="#ffffff" >
+        <td align="center"    width="50px">序号</td>
+        <td align="center"    width="100px">职务名称</td>
+        <td align="center"   >任职人员</td>
+        <td align="center"   width="100px">上级职务</td>
+        <td align="center"   width="100px">是否可用</td>
+        <td align="center" width="100px" >操作</td>
+        </tr>
+        {% for u in depatementlist %}
+        <tr >
+        <td  align="center">{{ forloop.counter }}</td>
+        <td align="center">{{ u.name }}</td>
+        <td  align="center">{% if u.manager %}{{ u.manager.username }}:{{ u.manager.get_full_name }}{% endif %}</td>
+        <td  align="center">{%if u.fatherDepart %}{% if u.fatherDepart.manager %}{{ u.fatherDepart.manager.username }}:{{ u.fatherDepart.manager.get_full_name }}:{% endif %}{{ u.fatherDepart.name }}{% else %}{% endif %}</td>
+        <td  align="center"><a href="javascript:deluser('{{ u.name }}','{% if u.manager %}{{ u.manager.username }}:{{ u.manager.get_full_name }}{% endif %}','{{ u.id }}');" id="del{{ u.id }}" {%if  u.isdel %}style="display: none;" {% endif %} >可用状态</a><a href="javascript:openuser('{{ u.name }}','{% if u.manager %}{{ u.manager.username }}:{{ u.manager.get_full_name }}{% endif %}','{{ u.id }}');" id="open{{ u.id }}" {% if not u.isdel %} style="display: none;" {% endif %}><span style="color: red;">不可用状态</span></a></td>
+        <td align="center">
+            <a href="/oa/depatementAdd/?depatementid={{ u.id }}" target="mainFrame" title="更新"><img src="{{ STATIC_URL }}image/update.gif" border="0"/></a>
+            <a href="/oa/depatementPeople/?depatementid={{ u.id }}" target="mainFrame" title="管理下属"><img src="{{ STATIC_URL }}image/user.gif" border="0"></a>
+        </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+</div>
+</div>
+  
+</form>
+{% endblock %}

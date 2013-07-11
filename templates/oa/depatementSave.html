@@ -32,47 +32,46 @@ function username_change(){
 <body onLoad=""  style="background:#ececec">
 {% endblock %}
 {% block navigator %}
-<a  href="javascript:void(0);">员工管理</a> >><a  href="/oa/depatementAdd">添加新职务</a>  >> <a href="javascript:history.back(-1);">后退</a>
+<a  href="javascript:void(0);">职务管理</a> >><a  href="/oa/depatementAdd/">添加新职务</a>  >> <a href="javascript:history.back(-1);">后退</a>
 {% endblock %}
 {% block content %}
-<form id="register"  method="post" action="/oa/depatementSave/" onsubmit="return valSubmit('register','autosubmit','userid');">
-<input type="hidden" id="userid" name="userid" {% if person %}value="{{ person.id }}"{% endif %}/>
+<form id="register"  method="post" action="/oa/depatementSave/" onsubmit="return valSubmit('register','autosubmit','depatementid');">
+<input type="hidden" id="depatementid" name="depatementid" {% if depatement %}value="{{ depatement.id }}"{% endif %}/>
 <div>
     <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
       <tr  bgcolor="#ffffff">
-        <td style="padding-left:5px;"  width="100px" >员工ID:</td>
+        <td style="padding-left:5px;"  width="100px" >职务名称:</td>
 
         <td>
-          <input type="text" id="ygbh" name="ygbh" onchange="username_change()" onblur="username_change()"   val="{'required':true,'title':'员工ID'}" value="{{person.username}}" style="width:300px;"/>  <span class="red_star">*</span><span class="red_star" id="username_error"></span>  </td>
+          <input type="text" id="name" name="name"  val="{'required':true,'title':'职务名称'}" value="{{depatement.name}}" style="width:300px;"/>  <span class="red_star">*</span><span class="red_star" id="username_error"></span>  </td>
       </tr>
 
       <tr bgcolor="#ffffff" >
-        <td style="padding-left:5px;" >员工姓名:</td>
+        <td style="padding-left:5px;" >任职人员:</td>
 
         <td>
-    	  <input type="text" name="truename" val="{'required':true,'title':'员工姓名'}"   value="{{person.get_full_name}}"  style="width:300px;"/><span class="red_star">*</span>	</td>
+    	<select name="managerid" style="width: 300px;">
+            <option value="">暂时不任命</option>
+        {% for u in userall %}
+
+            <option value="{{u.id }}" {% if depatement.manager %}{% ifequal u.id depatement.manager.id %} selected="selected" {% endifequal %}{% endif %}>{{ u.username }}:{{ u.get_full_name }}</option>
+        {% endfor %}
+    	</select>
+        </td>
       </tr>
 
-      <tr bgcolor="#ffffff" >
-        <td style="padding-left:5px;" >员工性别:</td>
 
-        <td>
-    	  <input type="radio" name="sex" value="0" checked="checked" /><label>女</label><input type="radio" name="sex" value="1" /><label>男</label>	</td>
-      </tr>
-      <tr bgcolor="#ffffff" >
-        <td style="padding-left:5px;" >员工电话:</td>
-
-        <td>
-    	  <input type="text" name="tel" val="{'required':true,'title':'员工电话','type':'int'}"  value="{{person.person.tel}}"  style="width:300px;"/><span class="red_star">*</span>	</td>
-      </tr>
         <tr bgcolor="#ffffff" >
            <td style="padding-left:5px;" >上司:</td>
 
            <td>
-       	  <select name="bmid"  style="width:300px;">
-                 <option value="">暂时不选择部门</option>
+       	  <select name="depatementfatherid"  style="width:300px;">
+                 <option value="">暂时不选择</option>
+                 {% for d in depatementlist %}
+                 <option value="{{ d.id }}"{% if depatement and depatement.fatherDepart %} {% ifequal d.id depatement.fatherDepart.pk %} selected="selected" {% endifequal %}{% endif %}>{% if d.manager %}{{ d.manager.username }}:{{ d.manager.get_full_name }}{% else %}空职务{% endif %}:{{ d.name }}</option>
+                 {% endfor %}
        	  </select>
-               <span class="red_star">*</span>	</td>
+               	</td>
          </tr>
 
 
@@ -87,7 +86,5 @@ function username_change(){
     </table>
 
 </div>
-</div>
-  
 </form>
 {% endblock %}

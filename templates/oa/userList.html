@@ -4,6 +4,13 @@
 $j(function(){
     document.getElementById("pageiframe").style.height=document.getElementsByTagName('body')[0].clientHeight-345;
 });
+function submintForm(){
+    $j('#register').submit();
+}
+function submintForm2(){
+    setTimeout(submintForm,1000);
+
+}
 </script>
 <style type="text/css">
 .STYLE1 {
@@ -26,14 +33,14 @@ $j(function(){
         <td style="padding-left:5px;"  width="100px" >员工ID:</td>
 
         <td>
-          <input type="text" id="ygbh" name="ygbh"    val="{'required':true,'title':'员工ID'}" value="{{person.username}}" style="width:300px;"/>  <span class="red_star" id="username_error"></span>  </td>
+          <input type="text" id="ygbh" name="ygbh" onchange="submintForm()"    val="{'required':true,'title':'员工ID'}" value="{{person.username}}" style="width:300px;"/>  <span class="red_star" id="username_error"></span>  </td>
       </tr>
 
       <tr bgcolor="#ffffff" >
         <td style="padding-left:5px;" >员工姓名:</td>
 
         <td>
-    	  <input type="text" name="truename" val="{'required':true,'title':'员工姓名'}"   value="{{person.get_full_name}}"  style="width:300px;"/>	</td>
+    	  <input type="text" name="truename"  onchange="submintForm()" val="{'required':true,'title':'员工姓名'}"   value="{{person.get_full_name}}"  style="width:300px;"/>	</td>
       </tr>
 
 
@@ -41,13 +48,13 @@ $j(function(){
         <td style="padding-left:5px;" >员工电话:</td>
 
         <td>
-    	  <input type="text" name="tel" val="{'required':true,'title':'员工电话','type':'int'}"  value="{{person.person.tel}}"  style="width:300px;"/>	</td>
+    	  <input type="text" name="tel"  onchange="submintForm()" val="{'required':true,'title':'员工电话','type':'int'}"  value="{{person.person.tel}}"  style="width:300px;"/>	</td>
       </tr>
     <tr bgcolor="#ffffff" >
        <td style="padding-left:5px;" >隶属部门:</td>
 
        <td>
-      <select name="bmid"  style="width:300px;">
+      <select name="bmid" onselect="submintForm()"  style="width:300px;">
              <option value="">暂时不选择部门</option>
       </select>
             </td>
@@ -56,8 +63,8 @@ $j(function(){
        <td style="padding-left:5px;" >是否离职:</td>
 
        <td>
-     <input type="radio" name="isdel" value="0" checked="checked"><label>未离职</label>
-     <input type="radio" name="isdel" value="1"><label>已离职</label>
+     <input type="radio" name="isdel" value="0" checked="checked" onclick="submintForm()"><label>未离职</label>
+     <input type="radio" name="isdel" value="1" onclick="submintForm()"><label>已离职</label>
             </td>
      </tr>
 
@@ -65,13 +72,13 @@ $j(function(){
       <tr bgcolor="#ffffff" >
         <td  align="left"  style="padding-left:25px;" colspan="2" >
           <input type="submit" name="Submit" value="过滤"/>
-
+            <input type="reset" name="Reset" value="清空" onclick="submintForm2()"/>
 
         </td>
       </tr>
       </table>
-    <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
-        <tr  bgcolor="#ffffff">
+    <table width="90%"  id="fromtable2" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+        <tr  bgcolor="#ffffff" >
         <td align="center"    width="50px">序号</td>
         <td align="center"    width="100px">员工ID</td>
         <td align="center"   width="100px">姓名</td>

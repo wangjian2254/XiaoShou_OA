@@ -94,14 +94,14 @@ def userOpen(request):
         try:
             user = User.objects.get(pk=id)
 
-            if user.is_active:
-                user.is_active = True
-                msg=u'开通用户成功'
-            else:
-                user.is_active = False
-                msg=u'设置用户离职成功'
+            # if user.is_active:
+            user.is_active = True
+            msg=u'开通用户成功'
+            # else:
+            # user.is_active = False
+            # msg=u'设置用户离职成功'
             user.save()
-            return getResult(True, )
+            return getResult(True,msg )
         except:
             return getResult(False, msg)
     return getResult(False, u'请传递用户id')

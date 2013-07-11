@@ -6,6 +6,7 @@ Created on 2011-3-19
 '''
 from django.conf.urls import patterns
 from xiaoshou_oa.views import top, menu, welcome
+from xiaoshou_oa.views_depatement import depatementAdd, depatementList, depatementSave, depatementDelete, depatementOpen, depatementPeople, depatementPeopleDel, depatementPeopleAdd
 from xiaoshou_oa.views_user import userSave, userAdd, userList, userListPage, check_username, userDelete, userOpen, userPassword
 
 
@@ -21,4 +22,13 @@ urlpatterns = patterns('^oa/$',
                         (r'^userPassword/$',userPassword),
                         (r'^userList/$',userList),
                         (r'^userListPage/$',userListPage),
+
+                        (r'^depatementAdd/$',depatementAdd),
+                        (r'^depatementSave/$',depatementSave),
+                        (r'^depatementList/$',depatementList),
+                        (r'^depatementDelete/$',depatementDelete),
+                        (r'^depatementOpen/$',depatementOpen),
+                        (r'^depatementPeople/$',depatementPeople),
+                        (r'^depatementPeopleAdd/$',depatementPeopleAdd),
+                        (r'^depatementPeopleDel/$',depatementPeopleDel),
                        )

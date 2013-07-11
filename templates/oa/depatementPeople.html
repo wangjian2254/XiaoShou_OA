@@ -1,0 +1,131 @@
+{% extends "base/basepage.html" %}
+{% block js %}
+<script type="text/javascript">
+function submitForm(id){
+    document.getElementById(id).submit();
+
+}
+function showmessage(type){
+    if (!type){
+        return;
+    }
+    switch (type){
+        case 1:
+            art.dialog({id:'msg',title:'提示',content:"职务信息错误，请重新操作。",icon:'warning',lock: true,ok:true});
+            break;
+        case 2:
+            art.dialog({id:'msg',title:'提示',content:"用户信息不存在，请重新操作",icon:'warning',lock: true,ok:true});
+            break;
+        case 3:
+            art.dialog({id:'msg',title:'提示',content:"用户不符合条件，请重新选择",icon:'warning',lock: true,ok:true});
+            break;
+        case 4:
+            art.dialog({id:'msg',title:'提示',content:"用户是该职务的负责人,请先在职务修过界面,清空用户职务负责人身份。",icon:'warning',lock: true,ok:true});
+            break;
+        case 5:
+            art.dialog({id:'msg',title:'提示',content:"用户已经从该职务属下移除。",icon:'succeed',lock: true,ok:true});
+            break;
+        case 6:
+            art.dialog({id:'msg',title:'提示',content:"用户已经被添加至该职务属下。",icon:'succeed',lock: true,ok:true});
+            break;
+    }
+}
+$j(function(){
+    showmessage({{ type }})
+});
+</script>
+<style type="text/css">
+.STYLE1 {
+	height:25px;
+	background-color:#ffffff;
+}
+</style>
+{% endblock %}
+{% block body %}
+<body onLoad=""  style="background:#ececec">
+{% endblock %}
+{% block navigator %}
+<a  href="javascript:void(0);">职务管理</a> >><a  href="/oa/depatementAdd/">添加新职务</a>  >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+
+<div>
+    <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+      <tr  bgcolor="#ffffff">
+        <td style="padding-left:5px;"  width="100px" >职务名称:</td>
+
+        <td>
+          {{depatement.name}}  <a href="/oa/depatementAdd?depatementid={{ depatement.id }}" style="margin-left: 20px;">修改职务信息</a></td>
+      </tr>
+
+      <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >任职人员:</td>
+
+        <td>
+    	 {% if depatement.manager %}{{ depatement.manager.username }}:{{ depatement.manager.get_full_name }}{% else %}暂无任职人员{% endif %}
+
+        </td>
+      </tr>
+
+
+        <tr bgcolor="#ffffff" >
+           <td style="padding-left:5px;" >上司:</td>
+
+           <td>
+               {% if depatement and depatement.fatherDepart %}
+                 {% for d in depatementlist %}
+                  {% ifequal d.id depatement.fatherDepart.pk %} {% if d.manager %}{{ d.manager.username }}:{{ d.manager.get_full_name }}{% else %}空职务{% endif %}:{{ d.name }} {% endifequal %}
+                 {% endfor %}
+               {% else %}
+                   暂无上司
+               {% endif %}
+               	</td>
+         </tr>
+
+
+      <tr bgcolor="#ffffff" >
+        <td  align="left"  style="padding-left:25px;" colspan="2" >
+        <label style="line-height: 30px;margin-right: 10px;">下属管理:</label>
+        <form id="depatementPeople" action="/oa/depatementPeople/" method="post" >
+            <select name="depatementid" onchange="submitForm('depatementPeople')" style="width: 300px;" >
+            {% for d in depatementlist %}
+                <option value="{{ d.id }}"{% ifequal d.id depatement.pk %} selected="selected" {% endifequal %}>{% if d.manager %}{{ d.manager.username }}:{{ d.manager.get_full_name }}{% else %}空职务{% endif %}:{{ d.name }}</option>
+            {% endfor %}
+            </select>
+        </form>
+        </td>
+      </tr>
+    <tr>
+        <td colspan="3" style="vertical-align: middle;">
+            <div style="width: 45%;float: left;display: block;height: 400px;">
+            <label style="margin: 10px;line-height: 30px;">无职务人员</label>
+                <form id="depatementPeopleAdd" action="/oa/depatementPeopleAdd/" method="post"><input type="hidden" name="depatementid" value="{{ depatement.id }}">
+                <select multiple="multiple" name="userid" style="width: 100%;height: 90%" ondblclick="submitForm('depatementPeopleAdd');">
+                    {% for u in emptyuserlist %}
+                        <option value="{{ u.user.id }}" style="height: 20px;{% if forloop.counter|divisibleby:"2"  %}background-color: gainsboro{% endif %}">{{ u.user.username }}:{{ u.user.get_full_name }}</option>
+                    {% endfor %}
+                </select>
+                </form>
+            </div>
+            <div style="width: 50px;height: 400px;float: left;display: block;text-align: center;vertical-align: middle;">
+                <div style="width: 80%;height: 170px;vertical-align: bottom;"></div>
+                <div style="width: 80%;height: 30px;"><a href="javascript:submitForm('depatementPeopleAdd');"><img src="{{ STATIC_URL }}image/2.gif" border="0"></a></div>
+                <div style="width: 80%;height: 30px;"><a href="javascript:submitForm('depatementPeopleDel');"><img src="{{ STATIC_URL }}image/1.gif" border="0"></a></div>
+                    
+            </div>
+            <div style="width: 45%;float: left;display: block;height: 400px;">
+                <label style="margin: 10px;line-height: 30px;">{% if depatement.manager %}{{ depatement.manager.username }}:{{ depatement.manager.get_full_name }}:{% endif %}{{depatement.name}} 下属</label>
+                <form id="depatementPeopleDel" action="/oa/depatementPeopleDel/" method="post"><input type="hidden" name="depatementid" value="{{ depatement.id }}">
+                <select multiple="multiple" name="userid" style="width: 100%;height: 90%" ondblclick="submitForm('depatementPeopleDel');">
+                    {% for u in userlist %}
+                        <option value="{{ u.user.id }}" style="height: 20px;{% if forloop.counter|divisibleby:"2"  %}background-color: gainsboro{% endif %}">{{ u.user.username }}:{{ u.user.get_full_name }}</option>
+                    {% endfor %}
+                </select>
+                </form>
+            </div>
+        </td>
+    </tr>
+    </table>
+
+</div>
+{% endblock %}

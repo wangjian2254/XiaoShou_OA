@@ -311,5 +311,17 @@ serif;background-color:e0e0d5;}
 }
 
 #fromtable td{
+    background-color: #ffffff;
+    padding-left: 10px;
+}
+#fromtable td a{
+    margin-left: 10px;
+}
+#fromtable2 tr{
+    height: 30px;
+}
+
+#fromtable2 td{
+    background-color: #ffffff;
     padding-left: 10px;
 }
