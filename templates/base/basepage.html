@@ -9,12 +9,19 @@
     </script>
     <script type="text/javascript" src="{{STATIC_URL}}js/artDialog.js?skin=blue" >
     </script>
+
     <script type="text/javascript" src="{{STATIC_URL}}js/val.js" >
     </script>
     <script type="text/javascript" src="{{STATIC_URL}}js/json2.js" >
     </script>
     <script type="text/javascript">
         var $j = jQuery.noConflict();
+        $j(function(){
+            $j.ajaxSetup({
+                error: AjaxError
+            });
+        });
+
         $j(function(){
             result_alert2('{{ result }}','{{ msg }}');
         });
@@ -101,5 +108,6 @@ width="540"></td>
 	<td><img src="{{STATIC_URL}}image/contentframebottomright.png" alt="" height="23" width="16"></td>
 	</tr>
 </table>
+<div id="msg"></div>
 </body>
 </html>

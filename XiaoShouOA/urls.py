@@ -4,13 +4,14 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.contrib.auth.views import login, logout
 from XiaoShouOA import settings
-from xiaoshou_oa.views_user import default
+from xiaoshou_oa.views import default, default2
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
     url(r'^$', default),
+    url(r'^main$', default2),
     url(r'^oa/', include('xiaoshou_oa.urls')),
 
     (r'^accounts/login/$',login,{'template_name':'login.html'}),

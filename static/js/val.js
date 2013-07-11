@@ -1,4 +1,4 @@
-function valSubmit(formid){
+function valSubmit(formid,autosubmit,resultinput){
 	var input_arr=[];
 	if(formid){
 		input_arr=$j('#'+formid+' input');
@@ -31,9 +31,86 @@ function valSubmit(formid){
 			return false;
 		}
 	}
+    if(autosubmit){
+
+        var param=new Object();
+        var checkarr='';
+        $j('#'+formid+' input').each(function(i,inp){
+            var type=$j(inp).attr('type');
+            var name=$j(inp).attr('name');
+            var value=$j(inp).val();
+            if(type=='text'||type=='hidden'||type=='password'){
+                if(name){
+                    param[name]=value;
+                }
+            }else if(type=='radio'||type=='checkbox'){
+                if(name&&$j(inp).attr('checked')){
+                    if(!param[name]){
+                        param[name]=''
+                    }
+                    if(type=='radio'){
+                        param[name]+=value;
+                    }else{
+                        param[name]+=value+',';
+                        checkarr.replace(name+',','');
+                        checkarr+=name+',';
+                    }
+                }
+            }
+
+        });
+        $j('#'+formid+' select').each(function(i,inp){
+            var name=$j(inp).attr('name');
+            var value=$j(inp).val();
+            if(name){
+                param[name]=value;
+            }
+        });
+        $j('#'+formid+' textarea').each(function(i,inp){
+            var name=$j(inp).attr('name');
+            var value=$j(inp).val();
+            if(name){
+                param[name]=value;
+            }
+        });
+        if(checkarr){
+            var car=checkarr.split(',');
+            for(var i=0;i<car.length;i++){
+                if(param[car[i]]){
+                    param[car[i]]=param[car[i]].substring(0,param[car[i]].length-1);
+                }
+            }
+        }
+        var url=$j('#'+formid).attr('action');
+        var method=$j('#'+formid).attr('method');
+        if(method.toUpperCase()=="GET"){
+            $j.get(url,param,function(data){
+                success(data,resultinput);
+            });
+        }else{
+            $j.post(url,param,function(data){
+                success(data,resultinput);
+            });
+        }
+
+        return false;
+    }
 	return true;
 }
-
+function AjaxError(){
+     art.dialog({id:'msg',title:'提示',content:'网络错误，请稍后再试。',icon:'warning',lock: true,ok:true});
+}
+function success(data,resultid){
+            if(typeof data == 'string'){
+                data=JSON2.parse(data);
+            }
+            if(data.success){
+                result_alert2("succeed",data.message);
+                $j('#'+resultid).val(data.result);
+            }else{
+                result_alert2("warning",data.message);
+            }
+}
 function result_alert2(type,content)
 {
     switch (type)

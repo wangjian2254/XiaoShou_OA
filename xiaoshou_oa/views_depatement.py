@@ -21,7 +21,7 @@ def depatementAdd(request):
     id=request.REQUEST.get('depatementid')
     depatement={}
     if id:
-        depatement=Depatement.objects().get(pk=id)
+        depatement=Depatement.objects.get(pk=id)
         personquery=Person.objects.filter(depate=depatement)
         userlist=User.objects.filter(person__in=personquery)
     return render_to_response('oa/depatementSave.html',RequestContext(request,{'depatement':depatement,'userlist':userlist, 'userall':User.objects.all()}))
@@ -38,7 +38,7 @@ def depatementSave(request):
 
 
     if id:
-        depate = Depatement.objects().get(pk=id)
+        depate = Depatement.objects.get(pk=id)
 
     else:
         depate = Depatement()
@@ -66,7 +66,7 @@ def depatementDelete(request):
     id=request.REQUEST.get('depatementid')
     if id:
         try:
-            depate = Depatement.objects().get(pk=id)
+            depate = Depatement.objects.get(pk=id)
             count=Person.objects.filter(depate=depate).count()
             if 0<count:
                 return getResult(False,u'该职务还有属下，请先删除该职务底属下员工。')

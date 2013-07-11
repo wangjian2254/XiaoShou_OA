@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head>
+<link href="{{STATIC_URL}}css/css.css" rel="stylesheet" type="text/css">
+   <style>
+       body{
+           margin: 0px;
+           padding: 0px;
+       }
+       #userlistpage td{
+           text-align: center;
+           background-color: #ffffff;
+           padding-left: 10px;
+       }
+       #userlistpage td a{
+           margin-right: 10px;
+       }
+       #userlistpage tr{
+           height: 25px;
+       }
+   </style>
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery.js" >
+    </script>
+     <script type="text/javascript" src="{{STATIC_URL}}js/artDialog.js?skin=blue" >
+    </script>
+    <script src="{{STATIC_URL}}js/artDialogframe.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/val.js" >
+    </script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/json2.js" >
+    </script>
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+        $j(function(){
+            $j.ajaxSetup({
+                error: AjaxError
+            });
+        });
+
+
+        function deluser(username,fullname,userid){
+            art.dialog({id:'msg',title:'提示',content:"是否将员工“"+username+":"+fullname+"”设置为“离职”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
+           	                     $j.post('/oa/userDelete/?userid='+userid,null,function(data){
+                                    if(typeof data == 'string'){
+                                        data=JSON2.parse(data);
+                                    }
+                                    if(data.success){
+                                        result_alert2("succeed",data.message);
+                                    }else{
+                                        result_alert2("warning",data.message);
+                                    }
+                                 });
+            }});
+        }
+        function openuser(username,fullname,userid){
+            art.dialog({id:'msg',title:'提示',content:"是否将员工“"+username+":"+fullname+"”设置为“在职”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
+           	                     $j.post('/oa/userOpen/?userid='+userid,null,function(data){
+                                    if(typeof data == 'string'){
+                                        data=JSON2.parse(data);
+                                    }
+                                    if(data.success){
+                                        result_alert2("succeed",data.message);
+                                    }else{
+                                        result_alert2("warning",data.message);
+                                    }
+                                 });
+           	                 }});
+
+        }
+        function passworduser(username,fullname,userid){
+            art.dialog({id:'msg',title:'提示',content:"是否将员工“"+username+":"+fullname+"”密码重置？",icon:'warning',lock: true,cancel:true,ok:function(){
+           	                     $j.post('/oa/userPassword/?userid='+userid,null,function(data){
+                                        if(typeof data == 'string'){
+                                            data=JSON2.parse(data);
+                                        }
+                                        if(data.success){
+                                            result_alert2("succeed",data.message);
+                                        }else{
+                                            result_alert2("warning",data.message);
+                                        }
+                                 });
+           	                 }});
+        }
+
+    </script>
+</head>
+<body>
+<table id="userlistpage" width="100%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+
+{% for u in userlist %}
+<tr >
+<td width="50px">{{ forloop.counter }}</td>
+<td width="100px">{{ u.username }}</td>
+<td width="100px">{{ u.get_full_name }}</td>
+<td width="100px">{%if u.person.sex %}男{% else %}女{% endif %}</td>
+<td width="200px">{{ u.person.tel }}</td>
+<td width="100px">{% if u.person.depate and u.person.depate.manager %}{{ u.person.depate.manager.get_full_name }}{{ u.person.depate.name }}{% endif %}</td>
+<td width="100px">{%if u.is_active %}<a href="javascript:deluser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');" >在职状态</a>{% else %}<a href="javascript:openuser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');" >离职状态</a>{% endif %}</td>
+<td>
+    <a href="/oa/userAdd/?userid={{ u.id }}" target="mainFrame" title="更新"><img src="{{ STATIC_URL }}image/update.gif" border="0"/></a>
+    <a href="javascript:passworduser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');"  title="重置密码"><img src="{{ STATIC_URL }}image/p3.gif" border="0"/></a>
+</td>
+</tr>
+{% endfor %}
+</table>
+</body>
+</html>
+
+

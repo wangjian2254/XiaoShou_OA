@@ -32,7 +32,7 @@ class Office(models.Model):
 
 
 class QianDao(models.Model):
-    name = models.CharField(unique=True, verbose_name=u'名称', help_text=u'签到服务的名称')
+    name = models.CharField(unique=True, max_length=20, verbose_name=u'名称', help_text=u'签到服务的名称')
     needTime = models.BooleanField(default=True, verbose_name=u'需要时间', help_text=u'是否需要时间')
     needGPS = models.BooleanField(default=True, verbose_name=u'需要GPS', help_text=u'是否GPS信息')
     needAddress = models.BooleanField(default=True, verbose_name=u'需要街道地址', help_text=u'是否需要街道信息')
@@ -45,7 +45,7 @@ class UserQianDao(models.Model):
     dateTime = models.DateTimeField(auto_created=True, verbose_name=u'签到发生时间', help_text=u'提交到服务器上的时间')
     gps = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'gps信息', help_text=u'手机端获取的gps信息')
     office = models.ForeignKey(Office, blank=True, null=True, verbose_name=u'签到厅台', help_text=u'签到的位置')
-    address = models.CharField(max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
+    address = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 

@@ -32,10 +32,10 @@ function username_change(){
 <body onLoad=""  style="background:#ececec">
 {% endblock %}
 {% block navigator %}
-<a  href="javascript:void(0);">员工管理</a> >><a  href="/oa/userAdd">添加新用户</a>  >> <a href="javascript:history.back(-1);">后退</a>
+<a  href="javascript:void(0);">员工管理</a> >><a  href="/oa/depatementAdd">添加新职务</a>  >> <a href="javascript:history.back(-1);">后退</a>
 {% endblock %}
 {% block content %}
-<form id="register"  method="post" action="/oa/userSave/" onsubmit="return valSubmit('register','autosubmit','userid');">
+<form id="register"  method="post" action="/oa/depatementSave/" onsubmit="return valSubmit('register','autosubmit','userid');">
 <input type="hidden" id="userid" name="userid" {% if person %}value="{{ person.id }}"{% endif %}/>
 <div>
     <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">

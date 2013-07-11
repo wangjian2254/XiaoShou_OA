@@ -296,7 +296,13 @@ h1 {
 serif;background-color:e0e0d5;}
 
 .red_star {
+    margin-left:10px;
 	color: red;
+	font-size: 14px;
+}
+.green_star {
+    margin-left:10px;
+	color: green;
 	font-size: 14px;
 }
 

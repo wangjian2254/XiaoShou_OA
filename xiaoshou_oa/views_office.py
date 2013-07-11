@@ -17,10 +17,10 @@ def officeAdd(request):
     添加、修改用户信息
     离职用户
     '''
-    id=request.REQUEST.get('depatementid')
+    id=request.REQUEST.get('officeid')
     office={}
     if id:
-        office=Office.objects().get(pk=id)
+        office=Office.objects.get(pk=id)
     return render_to_response('oa/officeSave.html',RequestContext(request,{'office':office}))
 
 @login_required
@@ -36,7 +36,7 @@ def officeSave(request):
 
 
     if id:
-        office = Office.objects().get(pk=id)
+        office = Office.objects.get(pk=id)
 
     else:
         office = Office()
@@ -58,7 +58,7 @@ def officeDelete(request):
     id=request.REQUEST.get('officeid')
     if id:
         try:
-            office = Office.objects().get(pk=id)
+            office = Office.objects.get(pk=id)
 
             office.isdel=True
             office.save()
