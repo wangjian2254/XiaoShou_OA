@@ -70,7 +70,10 @@ function username_change(){
 
            <td>
        	  <select name="bmid"  style="width:300px;">
-                 <option value="">暂时不选择部门</option>
+                 <option value="">暂时不选择上司</option>
+                {% for d in depatementlist %}
+                 <option value="{{ d.id }}"{% if person and person.person and person.person.depate  %} {% ifequal d.id person.person.depate.pk %} selected="selected" {% endifequal %}{% endif %}>{% if d.manager %}{{ d.manager.username }}:{{ d.manager.get_full_name }}{% else %}空职务{% endif %}:{{ d.name }}</option>
+                 {% endfor %}
        	  </select>
                <span class="red_star">*</span>	</td>
          </tr>

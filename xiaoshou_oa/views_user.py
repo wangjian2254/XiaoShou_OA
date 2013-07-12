@@ -20,7 +20,7 @@ def userAdd(request):
     user = {}
     if id:
         user = User.objects.get(pk=id)
-    return render_to_response('oa/userSave.html', RequestContext(request, {'person': user}))
+    return render_to_response('oa/userSave.html', RequestContext(request, {'person': user, 'depatementlist':Depatement.objects.filter(isdel=False)}))
 
 @login_required
 def check_username(request):

@@ -8,7 +8,7 @@ from django.db import models
 
 class Depatement(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'职位后缀名称', help_text=u'部门的名称')
-    manager = models.ForeignKey(User, blank=True,null=True, related_name=u'department_manager', verbose_name=u'管理者', help_text=u'部门管理者')
+    manager = models.OneToOneField(User, blank=True,null=True, related_name=u'department_manager', verbose_name=u'管理者', help_text=u'部门管理者')
     fatherDepart = models.ForeignKey('Depatement', blank=True, null=True, related_name=u'department_father',
                                      verbose_name=u'父级部门', help_text=u'部门隶属关系')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
