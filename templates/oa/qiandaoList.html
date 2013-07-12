@@ -1,9 +1,9 @@
 {% extends "base/basepage.html" %}
 {% block js %}
 <script type="text/javascript">
-    function deluser(username,fullname,userid){
-                art.dialog({id:'msg',title:'提示',content:"是否将厅台“"+username+":"+fullname+"”设置为“不可用”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
-               	                     $j.post('/oa/officeDelete/?officeid='+userid,null,function(data){
+    function deluser(fullname,userid){
+                art.dialog({id:'msg',title:'提示',content:"是否将签到服务“"+fullname+"”设置为“不可用”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
+               	                     $j.post('/oa/qiandaoDelete/?qiandaoid='+userid,null,function(data){
                                         if(typeof data == 'string'){
                                             data=JSON2.parse(data);
                                         }
@@ -17,9 +17,9 @@
                                      });
                 }});
             }
-            function openuser(username,fullname,userid){
-                art.dialog({id:'msg',title:'提示',content:"是否厅台“"+username+":"+fullname+"”设置为“可用”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
-               	                     $j.post('/oa/officeOpen/?officeid='+userid,null,function(data){
+            function openuser(fullname,userid){
+                art.dialog({id:'msg',title:'提示',content:"是否签到服务“"+fullname+"”设置为“可用”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
+               	                     $j.post('/oa/qiandaoOpen/?qiandaoid='+userid,null,function(data){
                                         if(typeof data == 'string'){
                                             data=JSON2.parse(data);
                                         }
@@ -48,7 +48,7 @@
 <body onLoad=""  style="background:#ececec">
 {% endblock %}
 {% block navigator %}
-<a  href="javascript:void(0);">厅台管理</a> >><a  href="/oa/officeAdd/">添加新厅台</a>  >> <a href="javascript:history.back(-1);">后退</a>
+<a  href="javascript:void(0);">签到服务管理</a> >><a  href="/oa/qiandaoAdd/">添加新签到服务</a>  >> <a href="javascript:history.back(-1);">后退</a>
 {% endblock %}
 {% block content %}
 <form id="register"  method="get" action="/oa/userListPage/" target="userlist" >
@@ -57,23 +57,23 @@
     <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
         <tr  bgcolor="#ffffff" >
         <td align="center"    width="50px">序号</td>
-        <td align="center"    width="100px">厅台名称</td>
-        <td align="center"    width="100px">厅台唯一标记</td>
-        <td align="center"    width="150px">厅台gps信息</td>
-        <td align="center"   >厅台地址信息</td>
+        <td align="center"    width="100px">签到服务名称</td>
+        <td align="center"    width="100px">是否需要时间</td>
+        <td align="center"    width="150px">是否需要GPS</td>
+        <td align="center"   >是否需要地址</td>
         <td align="center"   width="100px">是否可用</td>
         <td align="center" width="100px" >操作</td>
         </tr>
-        {% for u in officelist %}
+        {% for u in qiandaolist %}
         <tr >
         <td  align="center">{{ forloop.counter }}</td>
         <td align="center">{{ u.name }}</td>
-        <td  align="center">{{ u.flag }}</td>
-        <td  align="center">{%if u.gps %}{{ u.gps }}{% else %}暂无{% endif %}</td>
-        <td  align="center">{%if u.address %}{{ u.address }}{% else %}暂无{% endif %}</td>
-        <td  align="center"><a href="javascript:deluser('{{ u.flag }}','{{ u.name }}','{{ u.id }}');" id="del{{ u.id }}" {%if  u.isdel %}style="display: none;" {% endif %} >可用状态</a><a href="javascript:openuser('{{ u.flag }}','{{ u.name }}','{{ u.id }}');" id="open{{ u.id }}" {% if not u.isdel %} style="display: none;" {% endif %}><span style="color: red;">不可用状态</span></a></td>
+        <td  align="center">{% if u.needTime %}需要{% else %}<span style="color: red;">不需要</span>{% endif %} </td>
+        <td  align="center">{% if u.needGPS %}需要 {% else %}<span style="color: red;">不需要</span>{% endif %} </td>
+        <td  align="center">{% if  u.needAddress %}需要{% else %}<span style="color: red;">不需要</span>{% endif %} </td>
+        <td  align="center"><a href="javascript:deluser('{{ u.name }}','{{ u.id }}');" id="del{{ u.id }}" {%if  u.isdel %}style="display: none;" {% endif %} >可用状态</a><a href="javascript:openuser('{{ u.name }}','{{ u.id }}');" id="open{{ u.id }}" {% if not u.isdel %} style="display: none;" {% endif %}><span style="color: red;">不可用状态</span></a></td>
         <td align="center">
-            <a href="/oa/officeAdd/?officeid={{ u.id }}" target="mainFrame" title="更新"><img src="{{ STATIC_URL }}image/update.gif" border="0"/></a>
+            <a href="/oa/qiandaoAdd/?qiandaoid={{ u.id }}" target="mainFrame" title="更新"><img src="{{ STATIC_URL }}image/update.gif" border="0"/></a>
         </td>
         </tr>
         {% endfor %}

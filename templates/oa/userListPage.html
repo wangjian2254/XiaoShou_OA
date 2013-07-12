@@ -102,9 +102,10 @@
             {% if u.department_manager  %}
                 {% ifequal u.department_manager.pk u.person.depate.pk %}
                     自己
+                {% else %}
+                    {{ u.person.depate.manager.get_full_name }}:{{ u.person.depate.name }}
                 {% endifequal %}
             {% endif %}
-            {{ u.person.depate.manager.get_full_name }}:{{ u.person.depate.name }}
         {% else %}
             {{ u.person.depate.name }}
         {% endif %}

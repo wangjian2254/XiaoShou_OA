@@ -8,6 +8,7 @@ from django.conf.urls import patterns
 from xiaoshou_oa.views import top, menu, welcome
 from xiaoshou_oa.views_depatement import depatementAdd, depatementList, depatementSave, depatementDelete, depatementOpen, depatementPeople, depatementPeopleDel, depatementPeopleAdd
 from xiaoshou_oa.views_office import officeAdd, officeSave, check_office, officeList, officeDelete, officeOpen
+from xiaoshou_oa.views_qiandao import qiandaoAdd, qiandaoSave, qiandaoDelete, qiandaoOpen, qiandaoList, check_qiandao
 from xiaoshou_oa.views_user import userSave, userAdd, userList, userListPage, check_username, userDelete, userOpen, userPassword
 
 
@@ -39,4 +40,11 @@ urlpatterns = patterns('^oa/$',
                         (r'^officeList/$',officeList),
                         (r'^officeDelete/$',officeDelete),
                         (r'^officeOpen/$',officeOpen),
+
+                        (r'^qiandaoAdd/$',qiandaoAdd),
+                        (r'^check_qiandao/$',check_qiandao),
+                        (r'^qiandaoSave/$',qiandaoSave),
+                        (r'^qiandaoDelete/$',qiandaoDelete),
+                        (r'^qiandaoOpen/$',qiandaoOpen),
+                        (r'^qiandaoList/$',qiandaoList),
                        )

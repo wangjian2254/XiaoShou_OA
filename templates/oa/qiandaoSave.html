@@ -1,0 +1,83 @@
+{% extends "base/basepage.html" %}
+{% block js %}
+<script type="text/javascript">
+function username_change(){
+   var username= $j('#name').val();
+    if(!username){
+        return;
+    }
+    $j.get('/oa/check_qiandao/',{'name':username},function(data){
+        if(typeof data =='string'){
+            data=JSON2.parse(data);
+        }
+        if(data.success){
+            document.getElementById("username_error").className="green_star";
+            $j('#username_error').html('OK. "'+username+'" 可用。')
+        }else{
+            document.getElementById("username_error").className="red_star";
+            $j('#username_error').html('"'+username+'" '+data.message);
+        }
+    });
+
+}
+</script>
+<style type="text/css">
+.STYLE1 {
+	height:25px;
+	background-color:#ffffff;
+}
+</style>
+{% endblock %}
+{% block body %}
+<body onLoad=""  style="background:#ececec">
+{% endblock %}
+{% block navigator %}
+<a  href="javascript:void(0);">签到服务管理</a> >><a  href="/oa/qiandaoAdd">添加新签到服务</a>  >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<form id="register"  method="post" action="/oa/qiandaoSave/" onsubmit="return valSubmit('register','autosubmit','qiandaoid');">
+<input type="hidden" id="qiandaoid" name="qiandaoid" {% if qiandao %}value="{{ qiandao.id }}"{% endif %}/>
+<div>
+    <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+      <tr  bgcolor="#ffffff">
+        <td style="padding-left:5px;"  width="100px" >签到服务名称:</td>
+
+        <td>
+          <input type="text" id="name" name="name" {% if qiandao %}readonly="true" {% endif %} onchange="username_change()" onblur="username_change()"   val="{'required':true,'title':'签到服务名称'}" value="{{qiandao.name}}" style="width:300px;"/>
+            <span class="red_star">*</span><span class="red_star" id="username_error"></span>  </td>
+      </tr>
+
+      <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >是否需要时间:</td>
+
+        <td><input type="radio" name="needtime" value="0" checked="checked" /><label>不需要</label><input type="radio" name="needtime" value="1" /><label>需要</label>
+    	  	</td>
+      </tr>
+
+      <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >是否需要GPS信息:</td>
+
+        <td>
+    	  <input type="radio" name="needgps" value="0" checked="checked" /><label>不需要</label><input type="radio" name="needgps" value="1" /><label>需要</label>	</td>
+      </tr>
+
+      <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >是否需要街道信息:</td>
+
+        <td>
+    	  <input type="radio" name="needaddress" value="0" checked="checked" /><label>不需要</label><input type="radio" name="needaddress" value="1" /><label>需要</label>	</td>
+      </tr>
+
+      <tr bgcolor="#ffffff" >
+        <td  align="left"  style="padding-left:25px;" colspan="2" >
+          <input type="submit" name="Submit" value="确定"/>
+    	  <input type="reset" name="Reset" value="重置"/>
+    	  <input type="button" name="Return" value="返回" onClick="javascript:history.back(-1);" />
+
+        </td>
+      </tr>
+    </table>
+
+</div>
+</form>
+{% endblock %}

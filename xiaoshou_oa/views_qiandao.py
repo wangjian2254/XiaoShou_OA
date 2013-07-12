@@ -22,6 +22,15 @@ def qiandaoAdd(request):
         qiandao = QianDao.objects.get(pk=id)
     return render_to_response('oa/qiandaoSave.html', RequestContext(request, {'qiandao': qiandao}))
 
+@login_required
+def check_qiandao(request):
+    name = request.REQUEST.get('name')
+    if name:
+        count = QianDao.objects.filter(name=name).count()
+        if count>0:
+            return getResult(False,u'名称已经注册过了')
+        else:
+            return getResult(True,u'名称可用')
 
 @login_required
 def qiandaoSave(request):
@@ -36,9 +45,10 @@ def qiandaoSave(request):
 
     if id:
         qiandao = QianDao.objects.get(pk=id)
-
+        msg=u'修改签到服务成功'
     else:
         qiandao = QianDao()
+        msg=u'添加签到服务成功'
     qiandao.name = name
     if needgps=='1':
         qiandao.needGPS = True
@@ -55,7 +65,7 @@ def qiandaoSave(request):
 
     qiandao.save()
 
-    return getResult(True, u'操作成功')
+    return getResult(True, msg, qiandao.id)
 
 
 @login_required
@@ -71,6 +81,23 @@ def qiandaoDelete(request):
             qiandao.isdel = True
             qiandao.save()
             return getResult(True, u'删除签到服务成功')
+        except:
+            return getResult(False, u'签到服务不存在')
+    return getResult(False, u'请传递签到服务id')
+
+@login_required
+def qiandaoOpen(request):
+    '''
+    离职用户
+    '''
+    id = request.REQUEST.get('qiandaoid')
+    if id:
+        try:
+            qiandao = QianDao.objects.get(pk=id)
+
+            qiandao.isdel = False
+            qiandao.save()
+            return getResult(True, u'开通签到服务成功')
         except:
             return getResult(False, u'签到服务不存在')
     return getResult(False, u'请传递签到服务id')
