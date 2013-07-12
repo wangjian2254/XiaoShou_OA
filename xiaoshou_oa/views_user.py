@@ -141,7 +141,7 @@ def userPassword(request):
 
 @login_required
 def userList(request):
-    return render_to_response('oa/userList.html', RequestContext(request, {}))
+    return render_to_response('oa/userList.html', RequestContext(request, { 'depatelist' : Depatement.objects.all()}))
 
 
 @login_required

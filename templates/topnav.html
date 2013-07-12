@@ -35,7 +35,7 @@ a:hover {
           </span></h5>
       </td>
         <td >
-		<h5 align="right"><span class="STYLE1"><a >欢迎 <b>{{ user.get_full_name }}</b> {% if user.person.male %}先生{% else %}女士{% endif %}登录测试协同系统！</a>&nbsp;|&nbsp;<a href="/accounlogout/?next=/" target="_parent">退出系统</a> &nbsp;| </span></h5></td>
+		<h5 align="right"><span class="STYLE1"><a >欢迎 <b>{{ user.get_full_name }}</b> {% if user.person.male %}先生{% else %}女士{% endif %}登录测试协同系统！</a>&nbsp;|&nbsp;<a href="/accounts/logout/?next=/" target="_parent">退出系统</a> &nbsp;| </span></h5></td>
         <td width="106">
 		<div align="center">
 		<img src="{{STATIC_URL}}image/detailsicon.gif" width="23" height="23">&nbsp;&nbsp;

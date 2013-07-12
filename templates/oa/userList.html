@@ -51,11 +51,17 @@ function submintForm2(){
     	  <input type="text" name="tel"  onchange="submintForm()" val="{'required':true,'title':'员工电话','type':'int'}"  value="{{person.person.tel}}"  style="width:300px;"/>	</td>
       </tr>
     <tr bgcolor="#ffffff" >
-       <td style="padding-left:5px;" >隶属部门:</td>
+       <td style="padding-left:5px;" >职务:</td>
 
        <td>
-      <select name="bmid" onselect="submintForm()"  style="width:300px;">
-             <option value="">暂时不选择部门</option>
+      <select name="depate" onselect="submintForm()"  onchange="submintForm()"  style="width:300px;">
+             <option value="">暂时不选择</option>
+          {% for d in depatelist %}
+                 <option value="{{ d.id }}">
+                     {% if d.manager %}{{ d.manager.username }}:{{ d.manager.get_full_name }}{% else %}空职务{% endif %}:{{ d.name }}
+                     {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
+                 </option>
+          {% endfor %}
       </select>
             </td>
      </tr>
@@ -83,8 +89,9 @@ function submintForm2(){
         <td align="center"    width="100px">员工ID</td>
         <td align="center"   width="100px">姓名</td>
         <td align="center"   width="100px">性别</td>
-        <td align="center"   width="200px">电话</td>
+        <td align="center"   width="100px">电话</td>
         <td align="center"   width="100px">上司</td>
+        <td align="center"   width="100px">职务</td>
         <td align="center"   width="100px">是否离职</td>
         <td align="center"  >操作</td>
         </tr>
