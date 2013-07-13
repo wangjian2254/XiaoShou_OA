@@ -8,11 +8,12 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from xiaoshou_oa.models import QianDao, UserQianDao, Office, Person, Depatement
-from xiaoshou_oa.tools import getResult
+from xiaoshou_oa.tools import getResult, permission_required
 from django.contrib.auth.models import User
 
 
 @login_required
+@permission_required
 def qiandaoAdd(request):
     '''
     添加、修改用户信息
@@ -25,6 +26,7 @@ def qiandaoAdd(request):
     return render_to_response('oa/qiandaoSave.html', RequestContext(request, {'qiandao': qiandao}))
 
 @login_required
+@permission_required
 def check_qiandao(request):
     name = request.REQUEST.get('name')
     if name:
@@ -35,6 +37,7 @@ def check_qiandao(request):
             return getResult(True,u'名称可用')
 
 @login_required
+@permission_required
 def qiandaoSave(request):
     '''
     保存用户信息
@@ -71,6 +74,7 @@ def qiandaoSave(request):
 
 
 @login_required
+@permission_required
 def qiandaoDelete(request):
     '''
     离职用户
@@ -88,6 +92,7 @@ def qiandaoDelete(request):
     return getResult(False, u'请传递签到服务id')
 
 @login_required
+@permission_required
 def qiandaoOpen(request):
     '''
     离职用户
@@ -106,10 +111,12 @@ def qiandaoOpen(request):
 
 
 @login_required
+@permission_required
 def qiandaoList(request):
     return render_to_response('oa/qiandaoList.html', RequestContext(request, {'qiandaolist': QianDao.objects.all()}))
 
 @login_required
+@permission_required
 def qiandaoListJson(request):
     l = []
     for qiandao in QianDao.objects.all():
@@ -121,6 +128,7 @@ def qiandaoListJson(request):
     return getResult(True, u'更新签到服务成功', l)
 
 @login_required
+@permission_required
 def userqiandaoUpload(request):
     '''
     手机端提交签到信息
@@ -164,11 +172,13 @@ def getUserByDepartment(users,depatelist=[]):
 
 
 @login_required
+@permission_required
 def userQianDaoList(request):
     return render_to_response('oa/userqiandaoList.html', RequestContext(request, { 'depatementlist':Depatement.objects.all(), 'qiandaolist':QianDao.objects.all(), 'today':datetime.datetime.now()}))
 
 
 @login_required
+@permission_required
 def userQianDaoQuery(request):
     '''
     查询用户签到信息

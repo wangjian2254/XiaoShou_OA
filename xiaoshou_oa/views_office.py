@@ -8,12 +8,13 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from xiaoshou_oa.models import  Office, Depatement, UserQianDao
-from xiaoshou_oa.tools import getResult
+from xiaoshou_oa.tools import getResult, permission_required
 from django.contrib.auth.models import User
 
 
 
 @login_required
+@permission_required
 def officeAdd(request):
     '''
     添加、修改用户信息
@@ -27,6 +28,7 @@ def officeAdd(request):
 
 
 @login_required
+@permission_required
 def check_office(request):
     name = request.REQUEST.get('name')
     if name:
@@ -44,6 +46,7 @@ def check_office(request):
             return getResult(True,u'标记可用')
 
 @login_required
+@permission_required
 def officeSave(request):
     '''
     保存用户信息
@@ -74,6 +77,7 @@ def officeSave(request):
     return getResult(True,msg ,office.id)
 
 @login_required
+@permission_required
 def officeDelete(request):
     '''
     离职用户
@@ -92,6 +96,7 @@ def officeDelete(request):
 
 
 @login_required
+@permission_required
 def officeOpen(request):
     '''
     离职用户
@@ -110,11 +115,13 @@ def officeOpen(request):
 
 
 @login_required
+@permission_required
 def officeList(request):
     return render_to_response('oa/officeList.html',RequestContext(request,{'officelist':Office.objects.all()}))
 
 
 @login_required
+@permission_required
 def officeUploadGPS(request):
     # username = request.REQUEST.get('username')
     # password = request.REQUEST.get('password')
@@ -147,6 +154,7 @@ def officeUploadGPS(request):
     return getResult(True,u'设置厅台gps信息成功')
 
 @login_required
+@permission_required
 def calculateOffice(request):
     id = request.REQUEST.get('officeid')
     date = request.REQUEST.get('enddate')
@@ -176,6 +184,7 @@ def calculateOffice(request):
 
 
 @login_required
+@permission_required
 def setGPSoffice(request):
     officeid = request.REQUEST.get('officeid')
     userqiandaoid = request.REQUEST.get('userqiandaoid')

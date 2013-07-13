@@ -8,11 +8,11 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from xiaoshou_oa.models import Person, Depatement
-from xiaoshou_oa.tools import getResult
-
+from xiaoshou_oa.tools import getResult, permission_required
 
 
 @login_required
+@permission_required
 def depatementAdd(request):
     '''
     添加、修改用户信息
@@ -31,6 +31,7 @@ def depatementAdd(request):
     return render_to_response('oa/depatementSave.html',RequestContext(request,{'depatement':depatement,'userlist':userlist, 'userall':User.objects.filter(is_superuser=False), 'depatementlist':depatementlist}))
 
 @login_required
+@permission_required
 def depatementSave(request):
     '''
     保存用户信息
@@ -65,6 +66,7 @@ def depatementSave(request):
     return getResult(True,msg,depate.id)
 
 @login_required
+@permission_required
 def depatementDelete(request):
     '''
     离职用户
@@ -85,6 +87,7 @@ def depatementDelete(request):
 
 
 @login_required
+@permission_required
 def depatementOpen(request):
     '''
     离职用户
@@ -102,11 +105,13 @@ def depatementOpen(request):
 
 
 @login_required
+@permission_required
 def depatementList(request):
     return render_to_response('oa/depatementList.html',RequestContext(request,{'depatementlist':Depatement.objects.all()}))
 
 
 @login_required
+@permission_required
 def depatementPeopleDel(request):
     id=request.REQUEST.get('depatementid')
     userid=request.REQUEST.get('userid')
@@ -130,6 +135,7 @@ def depatementPeopleDel(request):
     return HttpResponseRedirect('/oa/depatementPeople/?type=5&depatementid=%s'%id)
 
 @login_required
+@permission_required
 def depatementPeopleAdd(request):
     id=request.REQUEST.get('depatementid')
     userid=request.REQUEST.get('userid')
@@ -153,6 +159,7 @@ def depatementPeopleAdd(request):
 
 
 @login_required
+@permission_required
 def depatementPeople(request):
     id=request.REQUEST.get('depatementid')
     depatementlist=Depatement.objects.filter(isdel=False)

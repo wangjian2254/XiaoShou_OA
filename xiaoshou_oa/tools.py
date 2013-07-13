@@ -8,6 +8,15 @@ from django.http import HttpResponse
 __author__ = u'王健'
 
 
+def permission_required():
+    def permission(func):
+        def test(request, *args, **kwargs):
+            if request.user.is_superuser:
+                return func(request, *args, **kwargs)
+            else:
+                return getResult(False,u'需要管理员权限')
+        return test
+    return permission
 
 def getResult(success,message,result=None):
     return HttpResponse(json.dumps({'success':success,'message':message,'result':result}))

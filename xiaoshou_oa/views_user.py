@@ -1,16 +1,18 @@
 #coding=utf-8
 # Create your views here.
-import json
+from django.contrib.auth import  login as auth_login
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from xiaoshou_oa.models import Person, Depatement
-from xiaoshou_oa.tools import getResult
+from xiaoshou_oa.tools import getResult, permission_required
 
 
 @login_required
+@permission_required
 def userAdd(request):
     '''
     添加、修改用户信息
@@ -23,6 +25,7 @@ def userAdd(request):
     return render_to_response('oa/userSave.html', RequestContext(request, {'person': user, 'depatementlist':Depatement.objects.filter(isdel=False)}))
 
 @login_required
+@permission_required
 def check_username(request):
     username = request.REQUEST.get('username')
     count=User.objects.filter(username=username).count()
@@ -31,6 +34,7 @@ def check_username(request):
     else:
         return getResult(True,u'用户名可用')
 @login_required
+@permission_required
 def userSave(request):
     '''
     保存用户信息
@@ -85,6 +89,7 @@ def userSave(request):
 
 
 @login_required
+@permission_required
 def userOpen(request):
     '''
     离职用户
@@ -107,6 +112,7 @@ def userOpen(request):
     return getResult(False, u'请传递用户id')
 
 @login_required
+@permission_required
 def userDelete(request):
     '''
     离职用户
@@ -123,6 +129,7 @@ def userDelete(request):
     return getResult(False, u'请传递用户id')
 
 @login_required
+@permission_required
 def userPassword(request):
     '''
     离职用户
@@ -140,11 +147,13 @@ def userPassword(request):
 
 
 @login_required
+@permission_required
 def userList(request):
     return render_to_response('oa/userList.html', RequestContext(request, { 'depatelist' : Depatement.objects.all()}))
 
 
 @login_required
+@permission_required
 def userListPage(request):
     username = request.REQUEST.get('ygbh')
     fullname = request.REQUEST.get('truename')
@@ -166,3 +175,25 @@ def userListPage(request):
     return render_to_response('oa/userListPage.html', RequestContext(request, {'userlist': userquery}))
 
 
+def clientLogin(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        if username:
+            userlist = User.objects.filter(username=username)[:1]
+            if len(userlist)>0:
+                user=userlist[0]
+                if not user.is_active:
+                    return getResult(False,u'用户已经离职，不能在使用本系统。')
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+
+
+            # Okay, security checks complete. Log the user in.
+            auth_login(request, form.get_user())
+
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+
+            return getResult(True,u'登录成功')
+        else:
+            return getResult(False,u'用户名密码错误')
