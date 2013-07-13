@@ -127,39 +127,6 @@ def qiandaoListJson(request):
 
     return getResult(True, u'更新签到服务成功', l)
 
-@login_required
-@permission_required
-def userqiandaoUpload(request):
-    '''
-    手机端提交签到信息
-    '''
-    user=request.user
-    id = request.REQUEST.get('qiandaoid')
-    if id:
-        try:
-            qiandao = QianDao.objects.get(pk=id)
-        except:
-            return getResult(False, u'签到服务不存在')
-    else:
-        return getResult(False, u'请传递签到服务id')
-    gps = request.REQUEST.get('gps')
-    address = request.REQUEST.get('address')
-    officeid = request.REQUEST.get('officeid')
-    userQianDao = UserQianDao()
-    userQianDao.user = user
-    userQianDao.qiandao = qiandao
-    if gps:
-        userQianDao.gps = gps
-    if address:
-        userQianDao.address = address
-    if officeid:
-        userQianDao.office=Office.objects.get(pk=officeid)
-    else:
-        return getResult(False,u'请选择签到厅台信息')
-    userQianDao.save()
-    return getResult(True, u'提交签到信息成功')
-
-
 
 def getUserByDepartment(users,depatelist=[]):
     u=[]
@@ -176,6 +143,21 @@ def getUserByDepartment(users,depatelist=[]):
 def userQianDaoList(request):
     return render_to_response('oa/userqiandaoList.html', RequestContext(request, { 'depatementlist':Depatement.objects.all(), 'qiandaolist':QianDao.objects.all(), 'today':datetime.datetime.now()}))
 
+
+def queryRecord(users,qiandao,startdate,enddate,dategroup):
+    query = UserQianDao.objects.filter(user__in=users).filter(qiandao=qiandao)
+    query = query.filter(dateTime__gte=startdate).filter(dateTime__lte=enddate)
+    query = query.order_by('dateTime').order_by('office').order_by('user')
+
+    datedict={}
+    dateformate='%Y-%m-%d %H:%M:%S'
+    date=None
+    for uqd in query:
+        date = uqd.dateTime.strftime(dateformate)
+        if not datedict.has_key(date):
+            datedict[date]=[]
+            dategroup.append({'date':date, 'query':datedict[date]})
+        datedict[date].append(uqd)
 
 @login_required
 @permission_required
@@ -205,26 +187,74 @@ def userQianDaoQuery(request):
         qiandao = QianDao.objects.get(pk = id)
     else:
         raise Http404
-    query = UserQianDao.objects.filter(user__in=users).filter(qiandao=qiandao)
-    query = query.filter(dateTime__gte=startdate).filter(dateTime__lte=enddate)
-    query = query.order_by('dateTime').order_by('office').order_by('user')
-
     dategroup=[]
-    datedict={}
-    dateformate='%Y-%m-%d %H:%M:%S'
-    date=None
-    for uqd in query:
-        date = uqd.dateTime.strftime(dateformate)
-        if not datedict.has_key(date):
-            datedict[date]=[]
-            dategroup.append({'date':date, 'query':datedict[date]})
-        datedict[date].append(uqd)
-
-
+    queryRecord(users,qiandao,startdate,enddate,dategroup)
     return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup}))
 
 
+@login_required
+def userQianDaoQueryClient(request):
+    '''
+    手机查询 签到信息
+    '''
+    qiandaoid = request.REQUEST.get('qiandaoid')
+    startdate = request.REQUEST.get('startdate')
+    enddate = request.REQUEST.get('enddate')
+    if not startdate or not enddate:
+        raise Http404
+    startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
+    enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
+    user=request.user
+    users=[user]
+    d=[]
+    for i in range(5):
+        u=getUserByDepartment(users,d)
+        users.extend(u)
 
+    if qiandaoid:
+        qiandao = QianDao.objects.get(pk = id)
+    else:
+        raise Http404
+    dategroup=[]
+    queryRecord(users,qiandao,startdate,enddate,dategroup)
+    querylist=[]
+    for datedict in dategroup:
+        querylist.append({'date':datedict['date'], 'query':[]})
+        for uqd in datedict['query']:
+            querylist[-1]['query'].append({'id':uqd.pk, 'userid':uqd.user.pk ,'username':uqd.user.username, 'truename':uqd.user.get_full_name, 'dateTime':uqd.dateTime.strftime('%H:%M'), 'gps':uqd.gps, 'address':uqd.address, 'officeid':uqd.office.pk, 'office':uqd.office.name})
+    return getResult(True,u'获取数据成功',querylist)
+
+
+@login_required
+def userqiandaoUploadClient(request):
+    '''
+    手机端提交签到信息
+    '''
+    user=request.user
+    id = request.REQUEST.get('qiandaoid')
+    if id:
+        try:
+            qiandao = QianDao.objects.get(pk=id)
+        except:
+            return getResult(False, u'签到服务不存在')
+    else:
+        return getResult(False, u'请传递签到服务id')
+    gps = request.REQUEST.get('gps')
+    address = request.REQUEST.get('address')
+    officeid = request.REQUEST.get('officeid')
+    userQianDao = UserQianDao()
+    userQianDao.user = user
+    userQianDao.qiandao = qiandao
+    if gps:
+        userQianDao.gps = gps
+    if address:
+        userQianDao.address = address
+    if officeid:
+        userQianDao.office=Office.objects.get(pk=officeid)
+    else:
+        return getResult(False,u'请选择签到厅台信息')
+    userQianDao.save()
+    return getResult(True, u'提交签到信息成功')
 
 
 
