@@ -2,10 +2,12 @@
 # Create your views here.
 import json
 
+import datetime
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from xiaoshou_oa.models import QianDao, UserQianDao, Office
+from xiaoshou_oa.models import QianDao, UserQianDao, Office, Person, Depatement
 from xiaoshou_oa.tools import getResult
 from django.contrib.auth.models import User
 
@@ -144,6 +146,77 @@ def userqiandaoUpload(request):
         userQianDao.address = address
     if officeid:
         userQianDao.office=Office.objects.get(pk=officeid)
+    else:
+        return getResult(False,u'请选择签到厅台信息')
     userQianDao.save()
     return getResult(True, u'提交签到信息成功')
+
+
+
+def getUserByDepartment(users,depatelist=[]):
+    u=[]
+    for user in users:
+        if user.department_manager and user.department_manager.pk not in depatelist:
+            for p in Person.objects.filter(depate=user.department_manager):
+                u.append(p.user)
+                depatelist.append(user.department_manager.pk)
+    return u
+
+
+@login_required
+def userQianDaoList(request):
+    return render_to_response('oa/userqiandaoList.html', RequestContext(request, { 'depatementlist':Depatement.objects.all(), 'qiandaolist':QianDao.objects.all(), 'today':datetime.datetime.now()}))
+
+
+@login_required
+def userQianDaoQuery(request):
+    '''
+    查询用户签到信息
+
+    '''
+    userid = request.REQUEST.get('userid')
+    qiandaoid = request.REQUEST.get('qiandaoid')
+    startdate = request.REQUEST.get('startdate')
+    enddate = request.REQUEST.get('enddate')
+    if not startdate or not enddate:
+        raise Http404
+    startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
+    enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
+    if userid:
+        user=User.objects.get(pk=userid)
+        users=[user]
+        d=[]
+        for i in range(5):
+            u=getUserByDepartment(users,d)
+            users.extend(u)
+    else:
+        users=User.objects.all()
+    if qiandaoid:
+        qiandao = QianDao.objects.get(pk = id)
+    else:
+        raise Http404
+    query = UserQianDao.objects.filter(user__in=users).filter(qiandao=qiandao)
+    query = query.filter(dateTime__gte=startdate).filter(dateTime__lte=enddate)
+    query = query.order_by('dateTime').order_by('office').order_by('user')
+
+    dategroup=[]
+    datedict={}
+    dateformate='%Y-%m-%d %H:%M:%S'
+    date=None
+    for uqd in query:
+        date = uqd.dateTime.strftime(dateformate)
+        if not datedict.has_key(date):
+            datedict[date]=[]
+            dategroup.append({'date':date, 'query':datedict[date]})
+        datedict[date].append(uqd)
+
+
+    return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup}))
+
+
+
+
+
+
+
 

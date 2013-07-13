@@ -3,6 +3,8 @@
 	<link href="{{STATIC_URL}}css/css.css" rel="stylesheet" type="text/css">
 	<link href="{{STATIC_URL}}css/form.css" rel="stylesheet" type="text/css">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    {% block prejs %}
+    {% endblock %}
     <script type="text/javascript" src="{{STATIC_URL}}js/tool.js" >
     </script>
     <script type="text/javascript" src="{{STATIC_URL}}js/jquery.js" >
@@ -14,6 +16,7 @@
     </script>
     <script type="text/javascript" src="{{STATIC_URL}}js/json2.js" >
     </script>
+
     <script type="text/javascript">
         var $j = jQuery.noConflict();
         $j(function(){

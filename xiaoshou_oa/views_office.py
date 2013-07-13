@@ -1,11 +1,13 @@
 #coding=utf-8
 # Create your views here.
 import json
+import datetime
 
 from django.contrib.auth.decorators import login_required
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from xiaoshou_oa.models import  Office, Depatement
+from xiaoshou_oa.models import  Office, Depatement, UserQianDao
 from xiaoshou_oa.tools import getResult
 from django.contrib.auth.models import User
 
@@ -144,3 +146,48 @@ def officeUploadGPS(request):
     office.save()
     return getResult(True,u'设置厅台gps信息成功')
 
+@login_required
+def calculateOffice(request):
+    id = request.REQUEST.get('officeid')
+    date = request.REQUEST.get('enddate')
+    if  not date:
+        date = datetime.datetime.now().strftime('%Y-%m-%d')
+    startdate = datetime.datetime.strptime(date+' 00:00:00', '%Y-%m-%d %H:%M:%S')
+    enddate = datetime.datetime.strptime(date+' 23:59:59', '%Y-%m-%d %H:%M:%S')
+
+    type=request.REQUEST.get('type')
+    msg = u''
+    if type:
+        if type=='1':
+            msg=u'设置成功'
+        if type=='2':
+            msg=u'设置失败'
+
+    if id:
+        office = Office.objects.get(pk=id)
+        query = UserQianDao.objects.filter(office=office)
+        query = query.filter(dateTime__gte=startdate).filter(dateTime__lte=enddate)
+        query = query.order_by('dateTime').order_by('user')
+    else:
+        office = {}
+        query = []
+
+    return render_to_response('oa/officeGPSPage.html', RequestContext(request, {'query': query, 'office':office, 'today':date, 'officelist':Office.objects.all()}))
+
+
+@login_required
+def setGPSoffice(request):
+    officeid = request.REQUEST.get('officeid')
+    userqiandaoid = request.REQUEST.get('userqiandaoid')
+    if officeid and userqiandaoid:
+        try:
+            office = Office.objects.get(pk=officeid)
+            userqiandao = UserQianDao.objects.get(pk=userqiandaoid)
+            office.gps=userqiandao.gps
+            office.address=userqiandao.address
+            office.save()
+            return HttpResponseRedirect('/oa/calculateOffice/?officeid=%s&endate=%s&type=1')
+        except:
+            return HttpResponseRedirect('/oa/calculateOffice/?type=2')
+    else:
+        return HttpResponseRedirect('/oa/calculateOffice/?type=2')

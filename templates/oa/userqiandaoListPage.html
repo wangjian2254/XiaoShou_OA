@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head>
+<link href="{{STATIC_URL}}css/css.css" rel="stylesheet" type="text/css">
+   <style>
+       body{
+           margin: 0px;
+           padding: 0px;
+       }
+       #userlistpage td{
+           text-align: center;
+           background-color: #ffffff;
+           padding-left: 10px;
+       }
+       #userlistpage td a{
+           margin-right: 10px;
+       }
+       #userlistpage tr{
+           height: 25px;
+       }
+   </style>
+    <script type="text/javascript" src="{{STATIC_URL}}js/jquery.js" >
+    </script>
+     <script type="text/javascript" src="{{STATIC_URL}}js/artDialog.js?skin=blue" >
+    </script>
+    <script src="{{STATIC_URL}}js/artDialogframe.js"></script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/val.js" >
+    </script>
+    <script type="text/javascript" src="{{STATIC_URL}}js/json2.js" >
+    </script>
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+        $j(function(){
+            $j.ajaxSetup({
+                error: AjaxError
+            });
+        });
+
+
+        function deluser(username,fullname,userid){
+            art.dialog({id:'msg',title:'提示',content:"是否将员工“"+username+":"+fullname+"”设置为“离职”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
+           	                     $j.post('/oa/userDelete/?userid='+userid,null,function(data){
+                                    if(typeof data == 'string'){
+                                        data=JSON2.parse(data);
+                                    }
+                                    if(data.success){
+                                        result_alert2("succeed",data.message);
+                                        $j('#del'+userid)[0].style['display']='none';
+                                        $j('#open'+userid)[0].style['display']='block';
+                                    }else{
+                                        result_alert2("warning",data.message);
+                                    }
+                                 });
+            }});
+        }
+        function openuser(username,fullname,userid){
+            art.dialog({id:'msg',title:'提示',content:"是否将员工“"+username+":"+fullname+"”设置为“在职”状态？",icon:'warning',lock: true,cancel:true,ok:function(){
+           	                     $j.post('/oa/userOpen/?userid='+userid,null,function(data){
+                                    if(typeof data == 'string'){
+                                        data=JSON2.parse(data);
+                                    }
+                                    if(data.success){
+                                        result_alert2("succeed",data.message);
+                                        $j('#del'+userid)[0].style['display']='block';
+                                        $j('#open'+userid)[0].style['display']='none'
+                                    }else{
+                                        result_alert2("warning",data.message);
+                                    }
+                                 });
+           	                 }});
+
+        }
+        function passworduser(username,fullname,userid){
+            art.dialog({id:'msg',title:'提示',content:"是否将员工“"+username+":"+fullname+"”密码重置？",icon:'warning',lock: true,cancel:true,ok:function(){
+           	                     $j.post('/oa/userPassword/?userid='+userid,null,function(data){
+                                        if(typeof data == 'string'){
+                                            data=JSON2.parse(data);
+                                        }
+                                        if(data.success){
+                                            result_alert2("succeed",data.message);
+                                        }else{
+                                            result_alert2("warning",data.message);
+                                        }
+                                 });
+           	                 }});
+        }
+
+    </script>
+</head>
+<body>
+<table id="userlistpage" width="100%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+
+{% for qmap in query %}
+    <tr  bgcolor="#ffffff" >
+            <td align="left" style="padding-left: 20px;" >日期：{{ qmap.date }}</td>
+            </tr>
+    {% for u in qmap.query %}
+<tr >
+<td width="50px">{{ forloop.counter }}</td>
+<td width="100px">{{ u.user.username }}</td>
+<td width="100px">{{ u.user.get_full_name }}</td>
+<td width="100px">{{ u.office.name }}</td>
+<td width="100px">{{ u.dateTime|date:"Y-m-d" }}</td>
+<td width="150px">
+    {{ u.gps }}
+</td>
+<td >{{ u.address }}</td>
+<td width="100px">{{ u.qiandao.name }}</td>
+
+</tr>
+{% endfor %}
+{% endfor %}
+</table>
+</body>
+</html>
+
+
