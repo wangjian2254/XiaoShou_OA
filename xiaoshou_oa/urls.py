@@ -8,7 +8,7 @@ from django.conf.urls import patterns
 from xiaoshou_oa.views import top, menu, welcome
 from xiaoshou_oa.views_depatement import depatementAdd, depatementList, depatementSave, depatementDelete, depatementOpen, depatementPeople, depatementPeopleDel, depatementPeopleAdd
 from xiaoshou_oa.views_office import officeAdd, officeSave, check_office, officeList, officeDelete, officeOpen, calculateOffice
-from xiaoshou_oa.views_qiandao import qiandaoAdd, qiandaoSave, qiandaoDelete, qiandaoOpen, qiandaoList, check_qiandao, userQianDaoList, userQianDaoQuery, userqiandaoUploadClient, userQianDaoQueryClient
+from xiaoshou_oa.views_qiandao import qiandaoAdd, qiandaoSave, qiandaoDelete, qiandaoOpen, qiandaoList, check_qiandao, userQianDaoList, userQianDaoQuery, userqiandaoUploadClient, userQianDaoQueryClient, qiandaoListClient
 from xiaoshou_oa.views_user import userSave, userAdd, userList, userListPage, check_username, userDelete, userOpen, userPassword, clientLogin
 
 
@@ -51,10 +51,13 @@ urlpatterns = patterns('^oa/$',
                         (r'^qiandaoOpen/$',qiandaoOpen),
                         (r'^qiandaoList/$',qiandaoList),
 
-                        # 手机端接口
-                        (r'^userqiandaoUploadClient/$',userqiandaoUploadClient),
-                        (r'^userQianDaoQueryClient/$',userQianDaoQueryClient),
 
                         (r'^userQianDaoList/$',userQianDaoList),
                         (r'^userQianDaoQuery/$',userQianDaoQuery),
+
+                        # 手机端接口
+                        (r'^userqiandaoUploadClient/$',userqiandaoUploadClient),
+                        (r'^userQianDaoQueryClient/$',userQianDaoQueryClient),
+                        (r'^qiandaoListClient/$',qiandaoListClient),
+
                        )

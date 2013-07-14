@@ -8,7 +8,7 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from xiaoshou_oa.models import QianDao, UserQianDao, Office, Person, Depatement
-from xiaoshou_oa.tools import getResult, permission_required
+from xiaoshou_oa.tools import getResult, permission_required, client_login_required
 from django.contrib.auth.models import User
 
 
@@ -115,18 +115,6 @@ def qiandaoOpen(request):
 def qiandaoList(request):
     return render_to_response('oa/qiandaoList.html', RequestContext(request, {'qiandaolist': QianDao.objects.all()}))
 
-@login_required
-@permission_required
-def qiandaoListJson(request):
-    l = []
-    for qiandao in QianDao.objects.all():
-        if qiandao.isdel:
-            l.append({'id':qiandao.id, 'isdel':qiandao.isdel})
-        else:
-            l.append({'id':qiandao.id, 'name':qiandao.name, 'needTime':qiandao.needTime, 'needGPS':qiandao.GPS, 'needAddress':qiandao.needAddress, 'isdel':qiandao.isdel})
-
-    return getResult(True, u'更新签到服务成功', l)
-
 
 def getUserByDepartment(users,depatelist=[]):
     u=[]
@@ -192,7 +180,7 @@ def userQianDaoQuery(request):
     return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup}))
 
 
-@login_required
+@client_login_required
 def userQianDaoQueryClient(request):
     '''
     手机查询 签到信息
@@ -225,7 +213,7 @@ def userQianDaoQueryClient(request):
     return getResult(True,u'获取数据成功',querylist)
 
 
-@login_required
+@client_login_required
 def userqiandaoUploadClient(request):
     '''
     手机端提交签到信息
@@ -257,6 +245,17 @@ def userqiandaoUploadClient(request):
     return getResult(True, u'提交签到信息成功')
 
 
+
+@client_login_required
+def qiandaoListClient(request):
+    l = []
+    for qiandao in QianDao.objects.all():
+        if qiandao.isdel:
+            l.append({'id':qiandao.id, 'isdel':qiandao.isdel})
+        else:
+            l.append({'id':qiandao.id, 'name':qiandao.name, 'needTime':qiandao.needTime, 'needGPS':qiandao.GPS, 'needAddress':qiandao.needAddress, 'isdel':qiandao.isdel})
+
+    return getResult(True, u'更新签到服务成功', l)
 
 
 
