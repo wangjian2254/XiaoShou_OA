@@ -253,7 +253,7 @@ def qiandaoListClient(request):
         if qiandao.isdel:
             l.append({'id':qiandao.id, 'isdel':qiandao.isdel})
         else:
-            l.append({'id':qiandao.id, 'name':qiandao.name, 'needTime':qiandao.needTime, 'needGPS':qiandao.GPS, 'needAddress':qiandao.needAddress, 'isdel':qiandao.isdel})
+            l.append({'id':qiandao.id, 'name':qiandao.name, 'needTime':qiandao.needTime, 'needGPS':qiandao.needGPS, 'needAddress':qiandao.needAddress, 'isdel':qiandao.isdel})
 
     return getResult(True, u'更新签到服务成功', l)
 
