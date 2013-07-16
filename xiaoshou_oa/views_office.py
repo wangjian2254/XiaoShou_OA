@@ -8,7 +8,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from xiaoshou_oa.models import  Office, Depatement, UserQianDao
-from xiaoshou_oa.tools import getResult, permission_required
+from xiaoshou_oa.tools import getResult, permission_required, client_login_required
 from django.contrib.auth.models import User
 
 
@@ -200,3 +200,14 @@ def setGPSoffice(request):
             return HttpResponseRedirect('/oa/calculateOffice/?type=2')
     else:
         return HttpResponseRedirect('/oa/calculateOffice/?type=2')
+
+@client_login_required
+def officeListClient(request):
+    l = []
+    for qiandao in Office.objects.all():
+        if qiandao.isdel:
+            l.append({'id':qiandao.id, 'isdel':qiandao.isdel})
+        else:
+            l.append({'id':qiandao.id, 'name':qiandao.name, 'flag':qiandao.flag, 'gps':qiandao.gps, 'address':qiandao.address, 'isdel':qiandao.isdel})
+
+    return getResult(True, u'更新厅台信息成功', l)
