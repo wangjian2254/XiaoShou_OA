@@ -228,6 +228,8 @@ def userqiandaoUploadClient(request):
     else:
         return getResult(False, u'请传递签到服务id')
     gps = request.REQUEST.get('gps')
+    if gps=='null,null':
+        return getResult(False, u'GPS信息不正确')
     address = request.REQUEST.get('address')
     officeid = request.REQUEST.get('officeid')
     userQianDao = UserQianDao()
