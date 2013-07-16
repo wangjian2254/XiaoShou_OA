@@ -165,11 +165,15 @@ def calculateOffice(request):
 
     type=request.REQUEST.get('type')
     msg = u''
+    result=u''
     if type:
         if type=='1':
             msg=u'设置成功'
+            result=u'succeed'
+
         if type=='2':
             msg=u'设置失败'
+            result=u'warning'
 
     if id:
         office = Office.objects.get(pk=id)
@@ -180,7 +184,7 @@ def calculateOffice(request):
         office = {}
         query = []
 
-    return render_to_response('oa/officeGPSPage.html', RequestContext(request, {'query': query, 'office':office, 'today':date, 'officelist':Office.objects.all()}))
+    return render_to_response('oa/officeGPSPage.html', RequestContext(request, {'msg':msg,'result':result, 'query': query, 'office':office, 'today':date, 'officelist':Office.objects.all()}))
 
 
 @login_required
@@ -195,7 +199,7 @@ def setGPSoffice(request):
             office.gps=userqiandao.gps
             office.address=userqiandao.address
             office.save()
-            return HttpResponseRedirect('/oa/calculateOffice/?officeid=%s&endate=%s&type=1')
+            return HttpResponseRedirect('/oa/calculateOffice/?officeid=%s&endate=%s&type=1'%(officeid,userqiandao.dateTime.strftime('%Y-%m-%d')))
         except:
             return HttpResponseRedirect('/oa/calculateOffice/?type=2')
     else:
@@ -208,6 +212,6 @@ def officeListClient(request):
         if qiandao.isdel:
             l.append({'id':qiandao.id, 'isdel':qiandao.isdel})
         else:
-            l.append({'id':qiandao.id, 'name':qiandao.name, 'flag':qiandao.flag, 'gps':qiandao.gps, 'address':qiandao.address, 'isdel':qiandao.isdel})
+            l.append({'id':qiandao.id, 'name':qiandao.name, 'flag':qiandao.flag, 'gps':(qiandao.gps and [qiandao.gps] or [''])[0], 'address':(qiandao.address and [qiandao.address] or [''])[0], 'isdel':qiandao.isdel})
 
     return getResult(True, u'更新厅台信息成功', l)

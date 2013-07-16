@@ -172,7 +172,7 @@ def userQianDaoQuery(request):
     else:
         users=User.objects.all()
     if qiandaoid:
-        qiandao = QianDao.objects.get(pk = id)
+        qiandao = QianDao.objects.get(pk = qiandaoid)
     else:
         raise Http404
     dategroup=[]
@@ -241,8 +241,9 @@ def userqiandaoUploadClient(request):
         userQianDao.office=Office.objects.get(pk=officeid)
     else:
         return getResult(False,u'请选择签到厅台信息')
+    userQianDao.dateTime=datetime.datetime.now()
     userQianDao.save()
-    return getResult(True, u'提交签到信息成功')
+    return getResult(True, u'提交签到信息成功',{'time':userQianDao.dateTime.strftime("%Y-%m-%d %H:%M:%S"),'id':id})
 
 
 

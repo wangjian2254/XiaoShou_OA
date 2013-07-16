@@ -32,14 +32,14 @@ function submintForm2(){
 <a  href="javascript:void(0);">数据导出</a> >><a  href="/oa/userqiandaoQuery/">用户签到查询</a>   >> <a href="javascript:history.back(-1);">后退</a>
 {% endblock %}
 {% block content %}
-<form id="register"  method="get" action="/oa/userListPage/" target="userlist" >
+<form id="register"  method="get" action="/oa/calculateOffice/"  >
 <div>
     <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
           <tr  bgcolor="#ffffff">
             <td style="padding-left:5px;"  width="100px" >厅台:</td>
 
             <td>
-                <select name="userid" onselect="submintForm()"  onchange="submintForm()"  style="width:300px;">
+                <select name="officeid" onselect="submintForm()"  onchange="submintForm()"  style="width:300px;">
                       {% for d in officelist %}
                              <option value="{{ d.id }}"
                              {% if office  %}
@@ -97,15 +97,15 @@ function submintForm2(){
             <td align="center"    >{{ forloop.counter }}</td>
             <td align="center"    >{{ u.user.username }}</td>
             <td align="center"   >{{ u.user.get_full_name }}</td>
-            <td align="center"   >{{ u.dateTime|date:'Y-m-d H:M:S' }}</td>
+            <td align="center"   >{{ u.dateTime|date:'Y-m-d H:i:s' }}</td>
             <td align="center"   >{{ u.gps }}</td>
             <td >{{ u.address }}</td>
-            <td align="center" ><a href="">设置此地址为厅台gps</a></td>
+            <td align="center" ><a href="/oa/setGPSoffice/?officeid={{ u.office.pk }}&userqiandaoid={{ u.pk }}">设置此地址为厅台gps</a></td>
             </tr>
         {% endfor %}
     </table>
 
-    <iframe id="pageiframe" width="90%" height="100%" frameborder="0" name="userlist" src="/oa/userListPage/" ></iframe>
+
 
 </div>
 </div>
