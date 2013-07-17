@@ -133,7 +133,7 @@ def userQianDaoList(request):
 
 
 def queryRecord(users,qiandao,startdate,enddate,dategroup):
-    query = UserQianDao.objects.filter(user__in=users).filter(qiandao=qiandao)
+    query = UserQianDao.objects.filter(user__in=users).filter(qiandao__in=qiandao)
     query = query.filter(dateTime__gte=startdate).filter(dateTime__lte=enddate)
     query = query.order_by('dateTime').order_by('office').order_by('user')
 
@@ -155,11 +155,13 @@ def userQianDaoQuery(request):
 
     '''
     userid = request.REQUEST.get('userid')
-    qiandaoid = request.REQUEST.get('qiandaoid')
+    qiandaoid = request.REQUEST.get('qiandaoid','').split(',')
+    qiandaoid.remove('')
     startdate = request.REQUEST.get('startdate')
     enddate = request.REQUEST.get('enddate')
     if not startdate or not enddate:
-        raise Http404
+        startdate=datetime.datetime.now().strftime('%Y-%m-%d')
+        enddate=datetime.datetime.now().strftime('%Y-%m-%d')
     startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
     if userid:
@@ -172,9 +174,9 @@ def userQianDaoQuery(request):
     else:
         users=User.objects.all()
     if qiandaoid:
-        qiandao = QianDao.objects.get(pk = qiandaoid)
+        qiandao = QianDao.objects.filter(pk__in=qiandaoid)
     else:
-        raise Http404
+        qiandao=[]
     dategroup=[]
     queryRecord(users,qiandao,startdate,enddate,dategroup)
     return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup}))
@@ -185,7 +187,8 @@ def userQianDaoQueryClient(request):
     '''
     手机查询 签到信息
     '''
-    qiandaoid = request.REQUEST.get('qiandaoid')
+    qiandaoid = request.REQUEST.get('qiandaoid','').split(',')
+    qiandaoid.remove('')
     startdate = request.REQUEST.get('startdate')
     enddate = request.REQUEST.get('enddate')
     if not startdate or not enddate:
@@ -200,9 +203,9 @@ def userQianDaoQueryClient(request):
         users.extend(u)
 
     if qiandaoid:
-        qiandao = QianDao.objects.get(pk = id)
+        qiandao = QianDao.objects.filter(pk__in=qiandaoid)
     else:
-        raise Http404
+        qiandao=[]
     dategroup=[]
     queryRecord(users,qiandao,startdate,enddate,dategroup)
     querylist=[]

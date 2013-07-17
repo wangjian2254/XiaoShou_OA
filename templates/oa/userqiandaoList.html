@@ -50,7 +50,7 @@ function submintForm2(){
                   </select>
                </td>
           </tr>
-           <tr  bgcolor="#ffffff">
+           <!--<tr  bgcolor="#ffffff">
             <td style="padding-left:5px;"  width="100px" >签到服务:</td>
 
             <td>
@@ -62,6 +62,16 @@ function submintForm2(){
                              </option>
                       {% endfor %}
                   </select>
+               </td>
+          </tr>-->
+        <tr  bgcolor="#ffffff">
+            <td style="padding-left:5px;"  width="100px" >签到服务:</td>
+
+            <td>
+              {% for d in qiandaolist %}
+                     <input type="checkbox" name="qiandaoid"  value="{{ d.id }}" onclick="submintForm()" /><label>{{ d.name }}</label>
+                     {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
+              {% endfor %}
                </td>
           </tr>
 
@@ -93,9 +103,8 @@ function submintForm2(){
         <td align="center"    width="100px">员工ID</td>
         <td align="center"   width="100px">姓名</td>
         <td align="center"   width="100px">厅台</td>
-        <td align="center"   width="100px">时间</td>
-        <td align="center"   width="150px">gps信息</td>
-        <td >地址</td>
+        <td align="center"   width="70px">时间</td>
+        <td align="center"   width="100px">地址</td>
         <td align="center"   width="100px">签到服务</td>
         </tr>
     </table>
