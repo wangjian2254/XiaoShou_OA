@@ -22,6 +22,8 @@ class Person(models.Model):
     sex = models.BooleanField(default=True, verbose_name=u'性别', help_text=u'性别')
     depate = models.ForeignKey(Depatement, blank=True,null=True, related_name=u'user_depate', verbose_name=u'隶属部门', help_text=u'员工隶属的部门')
     tel = models.CharField(max_length=15, verbose_name=u'电话')
+    deviceid=models.CharField(max_length=100,verbose_name=u'手机唯一编码',help_text=u'手机的指纹')
+
 
 class Office(models.Model):
     name = models.CharField(unique=True, max_length=30, verbose_name=u'厅台名称', help_text=u'厅台的名称')
@@ -33,7 +35,7 @@ class Office(models.Model):
 
 class QianDao(models.Model):
     name = models.CharField(unique=True, max_length=20, verbose_name=u'名称', help_text=u'签到服务的名称')
-    needTime = models.BooleanField(default=True, verbose_name=u'需要时间', help_text=u'是否需要时间')
+    needTime = models.BooleanField(default=True, verbose_name=u'每天唯一', help_text=u'是否每天唯一，按照最后一次签到信息')
     needGPS = models.BooleanField(default=True, verbose_name=u'需要GPS', help_text=u'是否GPS信息')
     needAddress = models.BooleanField(default=True, verbose_name=u'需要街道地址', help_text=u'是否需要街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
