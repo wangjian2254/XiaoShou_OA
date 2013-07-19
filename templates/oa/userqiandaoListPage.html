@@ -99,10 +99,8 @@
 <td width="100px">{{ u.user.username }}</td>
 <td width="100px">{{ u.user.get_full_name }}</td>
 <td width="100px">{{ u.office.name }}</td>
-<td width="100px">{{ u.dateTime|date:"Y-m-d" }}</td>
-<td width="150px">
-    {{ u.gps }}
-</td>
+<td width="70px">{{ u.dateTime|date:"H:i" }}</td>
+
 <td >{{ u.address }}</td>
 <td width="100px">{{ u.qiandao.name }}</td>
 
@@ -110,6 +108,7 @@
 {% endfor %}
 {% endfor %}
 </table>
+<a href="/oa/userqiandaoUploadClient/?qiandaoid=1&gps=1.1684,5.46&address=354464646&officeid=1">测试</a>
 </body>
 </html>
 

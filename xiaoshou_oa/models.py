@@ -22,7 +22,7 @@ class Person(models.Model):
     sex = models.BooleanField(default=True, verbose_name=u'性别', help_text=u'性别')
     depate = models.ForeignKey(Depatement, blank=True,null=True, related_name=u'user_depate', verbose_name=u'隶属部门', help_text=u'员工隶属的部门')
     tel = models.CharField(max_length=15, verbose_name=u'电话')
-    deviceid=models.CharField(max_length=100,verbose_name=u'手机唯一编码',help_text=u'手机的指纹')
+    deviceid=models.CharField(max_length=100,unique=True,blank=True,null=True,verbose_name=u'手机唯一编码',help_text=u'手机的指纹')
 
 
 class Office(models.Model):

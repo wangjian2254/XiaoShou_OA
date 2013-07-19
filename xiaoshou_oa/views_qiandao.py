@@ -138,7 +138,7 @@ def queryRecord(users,qiandao,startdate,enddate,dategroup):
     query = query.order_by('dateTime').order_by('office').order_by('user')
 
     datedict={}
-    dateformate='%Y-%m-%d %H:%M:%S'
+    dateformate='%Y-%m-%d'
     date=None
     for uqd in query:
         date = uqd.dateTime.strftime(dateformate)
@@ -155,8 +155,11 @@ def userQianDaoQuery(request):
 
     '''
     userid = request.REQUEST.get('userid')
-    qiandaoid = request.REQUEST.get('qiandaoid','').split(',')
-    qiandaoid.remove('')
+    qiandaoid = request.REQUEST.getlist('qiandaoid')
+    try:
+        qiandaoid.remove('')
+    except:
+        pass
     startdate = request.REQUEST.get('startdate')
     enddate = request.REQUEST.get('enddate')
     if not startdate or not enddate:

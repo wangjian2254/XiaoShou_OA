@@ -40,7 +40,7 @@ function username_change(){
 <div>
     <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
       <tr  bgcolor="#ffffff">
-        <td style="padding-left:5px;"  width="100px" >签到服务名称:</td>
+        <td style="padding-left:5px;"  width="150px" >签到服务名称:</td>
 
         <td>
           <input type="text" id="name" name="name" {% if qiandao %}readonly="true" {% endif %} onchange="username_change()" onblur="username_change()"   val="{'required':true,'title':'签到服务名称'}" value="{{qiandao.name}}" style="width:300px;"/>
@@ -48,7 +48,7 @@ function username_change(){
       </tr>
 
       <tr bgcolor="#ffffff" >
-        <td style="padding-left:5px;" >是否需要时间:</td>
+        <td style="padding-left:5px;" >是否每天只能签到一次:</td>
 
         <td><input type="radio" name="needtime" value="0" checked="checked" /><label>不需要</label><input type="radio" name="needtime" value="1" /><label>需要</label>
     	  	</td>
