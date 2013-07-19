@@ -148,17 +148,39 @@ class ProductType(models.Model):
     flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
+    class Admin():
+        pass
+    class Meta():
+        verbose_name=u'机器类型（合约、裸机）'
+    def __unicode__(self):
+        return self.name
+
 
 class ProductBrands(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'品牌', help_text=u'')
     flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
+    class Admin():
+        pass
+    class Meta():
+        verbose_name=u'品牌'
+    def __unicode__(self):
+        return self.name
+
+
 
 class Gift(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'礼物名称', help_text=u'礼物的名称')
     flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    class Admin():
+        pass
+    class Meta():
+        verbose_name=u'礼物'
+    def __unicode__(self):
+        return self.name
+
 
 
 class ProductModel(models.Model):
@@ -166,12 +188,26 @@ class ProductModel(models.Model):
     flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     brands = models.ForeignKey(ProductBrands, verbose_name=u'机型的品牌', help_text=u'品牌的机型')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    class Admin():
+        pass
+    class Meta():
+        verbose_name=u'机型'
+    def __unicode__(self):
+        return self.name
+
 
 
 class Product(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'产品名称', help_text=u'产品的名称')
     flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     productModel = models.ForeignKey(ProductModel, verbose_name=u'机型', help_text=u'机器型号')
+    class Admin():
+        pass
+    class Meta():
+        verbose_name=u'产品'
+    def __unicode__(self):
+        return self.name
+
 
 
 class ProductOrder(models.Model):
