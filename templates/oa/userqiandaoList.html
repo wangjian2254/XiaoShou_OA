@@ -76,18 +76,19 @@ function submintForm2(){
           </tr>
 
           <tr bgcolor="#ffffff" >
-            <td style="padding-left:5px;" >查询起日期:</td>
+            <td style="padding-left:5px;" >查询日期范围:</td>
 
             <td>
-        	  <input type="text" name="startdate"  onchange="submintForm()" val="{'required':true,'title':'查询起日期'}"   value="{{today|date:"Y-m-d"}}" onclick="new Calendar().show(this);" readonly="readonly" style="width:300px;"/></td>
+        	  <input type="text" name="startdate"  onchange="submintForm()" val="{'required':true,'title':'查询起日期'}"   value="{{today|date:"Y-m-d"}}" onclick="new Calendar().show(this);" readonly="readonly" style="width:100px;"/>
+            ~<input type="text" name="enddate"  onchange="submintForm()" val="{'required':true,'title':'查询止日期'}"  value="{{today|date:"Y-m-d"}}" onclick="new Calendar().show(this);" readonly="readonly" style=" width:100px; margin-left:10px;"/>
+            </td>
           </tr>
-
-
           <tr bgcolor="#ffffff" >
-            <td style="padding-left:5px;" >查询止日期:</td>
+            <td style="padding-left:5px;" >地点误差范围:</td>
 
             <td>
-        	  <input type="text" name="enddate"  onchange="submintForm()" val="{'required':true,'title':'查询止日期'}"  value="{{today|date:"Y-m-d"}}" onclick="new Calendar().show(this);" readonly="readonly" style="width:300px;"/></td>
+        	  <input type="text" name="mi" value="500" style="width: 300px;">
+            </td>
           </tr>
           <tr bgcolor="#ffffff" >
             <td  align="left"  style="padding-left:25px;" colspan="2" >
@@ -97,17 +98,7 @@ function submintForm2(){
             </td>
           </tr>
           </table>
-    <table width="90%"  id="fromtable2" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
-        <tr  bgcolor="#ffffff" >
-        <td align="center"    width="50px">序号</td>
-        <td align="center"    width="100px">员工ID</td>
-        <td align="center"   width="100px">姓名</td>
-        <td align="center"   width="100px">厅台</td>
-        <td align="center"   width="70px">时间</td>
-        <td align="center"   >地址</td>
-        <td align="center"   width="100px">签到服务</td>
-        </tr>
-    </table>
+
 
     <iframe id="pageiframe" width="90%" height="100%" frameborder="0" name="userlist" src="/oa/userQianDaoQuery/" ></iframe>
 

@@ -50,7 +50,7 @@ function username_change(){
       <tr bgcolor="#ffffff" >
         <td style="padding-left:5px;" >是否每天只能签到一次:</td>
 
-        <td><input type="radio" name="needtime" value="0" checked="checked" /><label>不需要</label><input type="radio" name="needtime" value="1" /><label>需要</label>
+        <td><input type="radio" name="needtime" value="0"  {% if qiandao and qiandao.needTime %}checked="checked"{% endif %} /><label>不需要</label><input type="radio" name="needtime" value="1" {% if qiandao and  not qiandao.needTime %}checked="checked"{% endif %} /><label>需要</label>
     	  	</td>
       </tr>
 
@@ -58,16 +58,43 @@ function username_change(){
         <td style="padding-left:5px;" >是否需要GPS信息:</td>
 
         <td>
-    	  <input type="radio" name="needgps" value="0" checked="checked" /><label>不需要</label><input type="radio" name="needgps" value="1" /><label>需要</label>	</td>
+    	  <input type="radio" name="needgps" value="0"  {% if qiandao and qiandao.needGPS %}checked="checked"{% endif %} /><label>不需要</label>
+            <input type="radio" name="needgps" value="1"   {% if qiandao and not qiandao.needGPS %}checked="checked"{% endif %} /><label>需要</label>	</td>
       </tr>
 
       <tr bgcolor="#ffffff" >
         <td style="padding-left:5px;" >是否需要街道信息:</td>
 
         <td>
-    	  <input type="radio" name="needaddress" value="0" checked="checked" /><label>不需要</label><input type="radio" name="needaddress" value="1" /><label>需要</label>	</td>
+    	  <input type="radio" name="needaddress" value="0" {% if qiandao and qiandao.needAddress %}checked="checked"{% endif %} /><label>不需要</label>
+            <input type="radio" name="needaddress" value="1"  {% if qiandao and not qiandao.needAddress %}checked="checked"{% endif %}/><label>需要</label>	</td>
       </tr>
+      <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >标准时间:</td>
 
+        <td>
+            <select name="hour" style="width:40px;">
+            <option>任何时间都行</option>
+                {% for i in hour %}
+                    <option value="{{ i }}" {% if qiandao %}{% ifequal qiandao.hour i %}selected="selected" {% endifequal %}{% else %}{% ifequal i 9 %}selected="selected" {% endifequal %}{% endif %}>{{ i }}</option>
+                {% endfor %}
+            </select>&nbsp;&nbsp;&nbsp;：&nbsp;&nbsp;&nbsp;
+            <select name="min" style="width:40px;">
+             <option>任何时间都行</option>
+                {% for i in min %}
+                    <option value="{{ i }}" {% if qiandao %}{% ifequal qiandao.min i %}selected="selected" {% endifequal %}{% else %}{% ifequal i 0 %}selected="selected" {% endifequal %}{% endif %}>{{ i }}</option>
+                {% endfor %}
+            </select>
+
+    	</td>
+      </tr>
+    <tr bgcolor="#ffffff" >
+        <td style="padding-left:5px;" >在标准时间前后:</td>
+
+        <td>
+    	  <input type="radio" name="type" value="1" {% if qiandao and qiandao.type %}checked="checked"{% endif %} /><label>在标准时间前为合格（上班）</label>
+            <input type="radio" name="type" value="0"  {% if qiandao and not qiandao.type %}checked="checked"{% endif %}/><label>在标准时间后为合格（下班）</label>	</td>
+      </tr>
       <tr bgcolor="#ffffff" >
         <td  align="left"  style="padding-left:25px;" colspan="2" >
           <input type="submit" name="Submit" value="确定"/>

@@ -5,6 +5,7 @@
 import json
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
+import math
 
 __author__ = u'王健'
 
@@ -38,3 +39,28 @@ def getResult(success,message,result=None,status_code=200):
     if result:
         map['result']=result
     return HttpResponse(json.dumps(map))
+
+def rad(d):
+    d=float(d)
+    return d*math.pi/180.0
+
+def distance(gps1,gps2):
+    if not gps1 or not gps2:
+        return 0
+    gps1=gps1.split(',')
+    lat1=gps1[0]
+    lng1=gps1[1]
+    gps2=gps2.split(',')
+    lat2=gps2[0]
+    lng2=gps2[1]
+    radlat1=rad(lat1)
+    radlat2=rad(lat2)
+    a=radlat1-radlat2
+    b=rad(lng1)-rad(lng2)
+    s=2*math.asin(math.sqrt(math.pow(math.sin(a/2),2)+math.cos(radlat1)*math.cos(radlat2)*math.pow(math.sin(b/2),2)))
+    earth_radius=6378.137
+    s=s*earth_radius
+    if s<0:
+        return -s
+    else:
+        return s

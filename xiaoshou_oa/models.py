@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
+from xiaoshou_oa.tools import distance
 
 
 class Depatement(models.Model):
@@ -35,10 +36,24 @@ class Office(models.Model):
 
 class QianDao(models.Model):
     name = models.CharField(unique=True, max_length=20, verbose_name=u'名称', help_text=u'签到服务的名称')
+    standardtime=models.CharField(max_length=10,blank=True, null=True,verbose_name=u'标准时间')
+    type=models.BooleanField(default=True,verbose_name=u'在标准时间前或后')
     needTime = models.BooleanField(default=True, verbose_name=u'每天唯一', help_text=u'是否每天唯一，按照最后一次签到信息')
     needGPS = models.BooleanField(default=True, verbose_name=u'需要GPS', help_text=u'是否GPS信息')
     needAddress = models.BooleanField(default=True, verbose_name=u'需要街道地址', help_text=u'是否需要街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+
+    def hour(self):
+        if self.standardtime:
+            return int(self.standardtime.split(':')[0])
+        else:
+            return 0
+    def min(self):
+        if self.standardtime:
+            return int(self.standardtime.split(':')[1])
+        else:
+            return 0
+
 
 
 class UserQianDao(models.Model):
@@ -49,6 +64,35 @@ class UserQianDao(models.Model):
     office = models.ForeignKey(Office, blank=True, null=True, verbose_name=u'签到厅台', help_text=u'签到的位置')
     address = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+
+    def officeDistance(self):
+        return distance(self.gps,self.office.gps)
+    def addressHG(self):
+        if self.officeDistance()>1000:
+            return u'超过1000米'
+        else:
+            return u'千米内'
+    def timeDistance(self):
+        hour=str(self.dateTime.hour)
+        minute=str(self.dateTime.minute)
+        if len(hour)==1:
+            hour='0'+hour
+        if len(minute)==1:
+            minute='0'+minute
+        t='%s:%s'%(hour,minute)
+        if t>self.qiandao.standardtime:
+            if self.qiandao.type:
+                return False
+            else:
+                return True
+        elif t==self.qiandao.standardtime:
+            return True
+        else:
+            if self.qiandao.type:
+                return True
+            else:
+                return False
+
 
 
 class DocumentKind(models.Model):

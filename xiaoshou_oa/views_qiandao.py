@@ -23,7 +23,7 @@ def qiandaoAdd(request):
     qiandao = {}
     if id:
         qiandao = QianDao.objects.get(pk=id)
-    return render_to_response('oa/qiandaoSave.html', RequestContext(request, {'qiandao': qiandao}))
+    return render_to_response('oa/qiandaoSave.html', RequestContext(request, {'qiandao': qiandao,'hour':range(24),'min':range(60)}))
 
 @login_required
 @permission_required
@@ -47,7 +47,13 @@ def qiandaoSave(request):
     needgps = request.REQUEST.get('needgps')
     needaddress = request.REQUEST.get('needaddress')
     needtime = request.REQUEST.get('needtime')
-
+    type = request.REQUEST.get('type')
+    hour = request.REQUEST.get('hour')
+    min = request.REQUEST.get('min')
+    if hour and  len(hour)==1:
+        hour='0'+str(hour)
+    if len(min)==1:
+        min='0'+str(min)
     if id:
         qiandao = QianDao.objects.get(pk=id)
         msg=u'修改签到服务成功'
@@ -67,7 +73,12 @@ def qiandaoSave(request):
         qiandao.needTime = True
     else:
         qiandao.needTime = False
-
+    if hour:
+        if type=='1':
+            qiandao.type = True
+        else:
+            qiandao.type = False
+        qiandao.standardtime='%s:%s'%(hour,min)
     qiandao.save()
 
     return getResult(True, msg, qiandao.id)
@@ -137,15 +148,38 @@ def queryRecord(users,qiandao,startdate,enddate,dategroup):
     query = query.filter(dateTime__gte=startdate).filter(dateTime__lte=enddate)
     query = query.order_by('dateTime').order_by('office').order_by('user')
 
-    datedict={}
+    datadict={}
+    datelist=[]
+    userlist=[]
     dateformate='%Y-%m-%d'
     date=None
     for uqd in query:
         date = uqd.dateTime.strftime(dateformate)
-        if not datedict.has_key(date):
-            datedict[date]=[]
-            dategroup.append({'date':date, 'query':datedict[date]})
-        datedict[date].append(uqd)
+        if date not in datelist:
+            datelist.append(date)
+        if uqd.user_id not in userlist:
+            userlist.append(uqd.user_id)
+        datadict['%s-%s-%s'%(date,uqd.user_id,uqd.qiandao_id)]=uqd
+    for date in datelist:
+        row={}
+        row['date']=date
+        row['rowspan']=3+len(qiandao)*4
+        row['query']=[]
+        for u in users:
+            if u.id not in userlist and u.is_active==False:
+                continue
+            userrow={}
+            userrow['user']=u
+            userrow['qiandaolist']=[]
+            for qd in qiandao:
+                if datadict.has_key('%s-%s-%s'%(date,u.id,qd.id)):
+                    userrow['qiandaolist'].append(datadict['%s-%s-%s'%(date,u.id,qd.id)])
+                else:
+                    userrow['qiandaolist'].append({})
+            row['query'].append(userrow)
+        dategroup.append(row)
+
+
 
 @login_required
 @permission_required
@@ -156,8 +190,9 @@ def userQianDaoQuery(request):
     '''
     userid = request.REQUEST.get('userid')
     qiandaoid = request.REQUEST.getlist('qiandaoid')
+    mi = request.REQUEST.get('mi',800)
     try:
-        qiandaoid.remove('')
+        mi=int(mi)
     except:
         pass
     startdate = request.REQUEST.get('startdate')
@@ -175,14 +210,14 @@ def userQianDaoQuery(request):
             u=getUserByDepartment(users,d)
             users.extend(u)
     else:
-        users=User.objects.all()
+        users=User.objects.filter(is_superuser=True)
     if qiandaoid:
         qiandao = QianDao.objects.filter(pk__in=qiandaoid)
     else:
         qiandao=[]
     dategroup=[]
     queryRecord(users,qiandao,startdate,enddate,dategroup)
-    return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup}))
+    return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup,'qiandao':qiandao,'mi':mi}))
 
 
 @client_login_required
