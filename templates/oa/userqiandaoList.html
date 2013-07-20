@@ -39,7 +39,7 @@ function submintForm2(){
             <td style="padding-left:5px;"  width="100px" >查询身份:</td>
 
             <td>
-                <select name="userid" onselect="submintForm()"  onchange="submintForm()"  style="width:300px;">
+                <select name="depatementid" onselect="submintForm()"  onchange="submintForm()"  style="width:300px;">
                          <option value="">所有人</option>
                       {% for d in depatementlist %}
                              <option value="{{ d.id }}">

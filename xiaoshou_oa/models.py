@@ -32,7 +32,8 @@ class Office(models.Model):
     gps = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'gps信息', help_text=u'厅台的gps信息')
     address = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
-
+    def __unicode__(self):
+        return self.name
 
 class QianDao(models.Model):
     name = models.CharField(unique=True, max_length=20, verbose_name=u'名称', help_text=u'签到服务的名称')
@@ -53,6 +54,8 @@ class QianDao(models.Model):
             return int(self.standardtime.split(':')[1])
         else:
             return 0
+    def __unicode__(self):
+        return self.name
 
 
 
@@ -98,7 +101,8 @@ class UserQianDao(models.Model):
 class DocumentKind(models.Model):
     name = models.CharField(max_length=30, unique=True, verbose_name=u'文档分类', help_text=u'文档的分类')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
-
+    def __unicode__(self):
+        return self.name
 
 class Document(models.Model):
     title = models.CharField(max_length=100, verbose_name=u'文档标题', help_text=u'文档的标题')
@@ -108,25 +112,27 @@ class Document(models.Model):
     show = models.IntegerField(default=1, verbose_name=u'浏览次数', help_text=u'浏览文档的次数')
     content = models.TextField(blank=True, null=True, verbose_name=u'文档内容', help_text=u'文档内容的段')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
-
+    def __unicode__(self):
+        return self.title
 
 class DocumentImage(models.Model):
     img = models.ImageField(blank=True, null=True, upload_to='media/upload/images', verbose_name=u'图片')
     document = models.ForeignKey(Document, verbose_name=u'隶属文档')
     index = models.IntegerField(verbose_name=u'排序')
 
-
 class Topic(models.Model):
     title = models.CharField(max_length=200, verbose_name=u'题目', help_text=u'选择题的题目')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
-
+    def __unicode__(self):
+        return self.title
 
 class Choice(models.Model):
     content = models.CharField(max_length=100, verbose_name=u'选项', help_text=u'选择题的选项')
     index = models.IntegerField(verbose_name=u'索引', help_text=u'选项索引')
     isright = models.BooleanField(default=False, verbose_name=u'是否正确', help_text=u'是否是正确答案')
     topic = models.ForeignKey(Topic, verbose_name=u'题目', help_text=u'隶属题目')
-
+    def __unicode__(self):
+        return self.content
 
 class Examination(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'考试名称', help_text=u'给考试起个名字，方便查询')
@@ -135,17 +141,19 @@ class Examination(models.Model):
     topics = models.ManyToManyField(Topic, verbose_name=u'试卷的考题', help_text=u'组成试卷的考题')
     time = models.IntegerField(verbose_name=u'考试时间', help_text=u'单位为分钟')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
-
+    def __unicode__(self):
+        return self.name
 
 class Score(models.Model):
     user = models.ForeignKey(User, verbose_name=u'用户')
     examination = models.ForeignKey(Examination, verbose_name=u'考试')
     score = models.IntegerField(verbose_name=u'得分')
-
+    def __unicode__(self):
+        return u'%s-%s'%(self.user,self.score)
 
 class ProductType(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'类型', help_text=u'合约、裸机……')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
+    flag = models.CharField(max_length=50,unique=True, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
     class Admin():
@@ -158,7 +166,7 @@ class ProductType(models.Model):
 
 class ProductBrands(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'品牌', help_text=u'')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
+    flag = models.CharField(max_length=50,unique=True, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
     class Admin():
@@ -172,7 +180,7 @@ class ProductBrands(models.Model):
 
 class Gift(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'礼物名称', help_text=u'礼物的名称')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
+    flag = models.CharField(max_length=50,unique=True, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
     class Admin():
         pass
@@ -185,7 +193,7 @@ class Gift(models.Model):
 
 class ProductModel(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'机型名称', help_text=u'')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
+    flag = models.CharField(max_length=50,unique=True, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
     brands = models.ForeignKey(ProductBrands, verbose_name=u'机型的品牌', help_text=u'品牌的机型')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
     class Admin():
@@ -193,25 +201,25 @@ class ProductModel(models.Model):
     class Meta():
         verbose_name=u'机型'
     def __unicode__(self):
-        return self.name
+        return u'%s-%s'%(self.name,self.brands.name)
 
-
-
-class Product(models.Model):
-    name = models.CharField(max_length=30, verbose_name=u'产品名称', help_text=u'产品的名称')
-    flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
-    productModel = models.ForeignKey(ProductModel, verbose_name=u'机型', help_text=u'机器型号')
-    class Admin():
-        pass
-    class Meta():
-        verbose_name=u'产品'
-    def __unicode__(self):
-        return self.name
+#
+#
+# class Product(models.Model):
+#     name = models.CharField(max_length=30, verbose_name=u'产品名称', help_text=u'产品的名称')
+#     flag = models.CharField(max_length=50, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
+#     productModel = models.ForeignKey(ProductModel, verbose_name=u'机型', help_text=u'机器型号')
+#     class Admin():
+#         pass
+#     class Meta():
+#         verbose_name=u'产品'
+#     def __unicode__(self):
+#         return self.name
 
 
 
 class ProductOrder(models.Model):
-    product = models.ForeignKey(Product, verbose_name=u'终端')
+    product = models.ForeignKey(ProductModel, verbose_name=u'终端')
     type = models.ForeignKey(ProductType, verbose_name=u'合约类型')
     gift = models.ManyToManyField(Gift, verbose_name=u'配套礼品')
     user = models.ForeignKey(User, verbose_name=u'用户')

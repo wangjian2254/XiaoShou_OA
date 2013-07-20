@@ -10,6 +10,7 @@ from django.template import RequestContext
 from xiaoshou_oa.models import QianDao, UserQianDao, Office, Person, Depatement
 from xiaoshou_oa.tools import getResult, permission_required, client_login_required
 from django.contrib.auth.models import User
+from xiaoshou_oa.views_xiaoshou import getDepartmentByDepartment
 
 
 @login_required
@@ -127,14 +128,6 @@ def qiandaoList(request):
     return render_to_response('oa/qiandaoList.html', RequestContext(request, {'qiandaolist': QianDao.objects.all()}))
 
 
-def getUserByDepartment(users,depatelist=[]):
-    u=[]
-    for user in users:
-        if user.department_manager and user.department_manager.pk not in depatelist:
-            for p in Person.objects.filter(depate=user.department_manager):
-                u.append(p.user)
-                depatelist.append(user.department_manager.pk)
-    return u
 
 
 @login_required
@@ -188,7 +181,7 @@ def userQianDaoQuery(request):
     查询用户签到信息
 
     '''
-    userid = request.REQUEST.get('userid')
+    depatementid = request.REQUEST.get('depatementid')
     qiandaoid = request.REQUEST.getlist('qiandaoid')
     mi = request.REQUEST.get('mi',800)
     try:
@@ -202,15 +195,20 @@ def userQianDaoQuery(request):
         enddate=datetime.datetime.now().strftime('%Y-%m-%d')
     startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
-    if userid:
-        user=User.objects.get(pk=userid)
-        users=[user]
+    if depatementid:
         d=[]
+        depatement=Depatement.objects.get(pk=depatementid)
+        d.append(depatement)
+
         for i in range(5):
-            u=getUserByDepartment(users,d)
-            users.extend(u)
+            for depat in getDepartmentByDepartment(d):
+                d.append(depat)
+
+        users=[]
+        for u in Person.objects.filter(depate__in=d):
+            users.append(u.user)
     else:
-        users=User.objects.filter(is_superuser=True)
+        users=User.objects.filter(is_superuser=False)
     if qiandaoid:
         qiandao = QianDao.objects.filter(pk__in=qiandaoid)
     else:

@@ -1,0 +1,138 @@
+{% extends "base/basepage.html" %}
+{% block prejs %}
+        <script type="text/javascript" src="{{ STATIC_URL }}js/Calendar3.js" />
+    {% endblock %}
+{% block js %}
+<script type="text/javascript">
+
+$j(function(){
+    document.getElementById("pageiframe").style.height=document.getElementsByTagName('body')[0].clientHeight-445;
+});
+function submintForm(){
+    $j('#register').submit();
+}
+function submintForm2(){
+    setTimeout(submintForm,1000);
+
+}
+function getProductByBrands(id){
+
+}
+function getProductByModel(id){
+
+}
+</script>
+
+<style type="text/css">
+.STYLE1 {
+	height:25px;
+	background-color:#ffffff;
+}
+</style>
+
+{% endblock %}
+{% block body %}
+<body onLoad=""  style="background:#ececec">
+{% endblock %}
+{% block navigator %}
+<a  href="javascript:void(0);">数据导出</a> >><a  href="/oa/userXiaoShouList/">销售查询</a>   >> <a href="javascript:history.back(-1);">后退</a>
+{% endblock %}
+{% block content %}
+<form id="register"  method="post" action="/oa/userProductOrderQuery/" target="userlist" >
+<div>
+    <table width="90%"  id="fromtable" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+          <tr  bgcolor="#ffffff">
+            <td style="padding-left:5px;"  width="100px" >查询身份:</td>
+
+            <td>
+                <select name="depatementid" onselect="submintForm()"  onchange="submintForm()"  style="width:300px;">
+                         <option value="">所有人</option>
+                      {% for d in depatementlist %}
+                             <option value="{{ d.id }}">
+                                 {% if d.manager %}{{ d.manager.username }}:{{ d.manager.get_full_name }}{% else %}空职务{% endif %}:{{ d.name }}
+                                 {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
+                             </option>
+                      {% endfor %}
+                  </select>
+               </td>
+          </tr>
+
+        <tr  bgcolor="#ffffff">
+            <td style="padding-left:5px;"  width="100px" >品牌:</td>
+
+            <td>
+              {% for d in productBrandslist %}
+                     <input type="checkbox" name="productBrandsid"   value="{{ d.id }}" id="productBrands{{ d.id }}" onclick="submintForm()" /><label>{{ d.name }}</label>
+                     {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
+              {% endfor %}
+               </td>
+          </tr>
+        <tr  bgcolor="#ffffff">
+            <td style="padding-left:5px;"  width="100px" >机型:</td>
+
+            <td>
+              {% for d in productModellist %}
+                     <input type="checkbox" name="productModelid"   value="{{ d.id }}" id="productModel{{ d.id }}"  onclick="submintForm()" /><label>{{ d.name }}</label>
+                     {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
+              {% endfor %}
+               </td>
+          </tr>
+
+        <tr  bgcolor="#ffffff">
+            <td style="padding-left:5px;"  width="100px" >类型:</td>
+
+            <td>
+              {% for d in productTypelist %}
+                     <input type="checkbox" name="productTypeid"   value="{{ d.id }}" onclick="submintForm()" /><label>{{ d.name }}</label>
+                     {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
+              {% endfor %}
+               </td>
+          </tr>
+        <tr  bgcolor="#ffffff">
+            <td style="padding-left:5px;"  width="100px" >配送礼物:</td>
+
+            <td>
+              {% for d in giftlist %}
+                     <input type="checkbox" name="giftid"   value="{{ d.id }}" onclick="submintForm()" /><label>{{ d.name }}</label>
+                     {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
+              {% endfor %}
+               </td>
+          </tr>
+
+          <tr bgcolor="#ffffff" >
+            <td style="padding-left:5px;" >查询日期范围:</td>
+
+            <td>
+        	  <input type="text" name="startdate"  onchange="submintForm()" val="{'required':true,'title':'查询起日期'}"   value="{{today|date:"Y-m-d"}}" onclick="new Calendar().show(this);" readonly="readonly" style="width:100px;"/>
+            ~<input type="text" name="enddate"  onchange="submintForm()" val="{'required':true,'title':'查询止日期'}"  value="{{today|date:"Y-m-d"}}" onclick="new Calendar().show(this);" readonly="readonly" style=" width:100px; margin-left:10px;"/>
+            </td>
+          </tr>
+
+          <tr bgcolor="#ffffff" >
+            <td  align="left"  style="padding-left:25px;" colspan="2" >
+              <input type="submit" name="Submit" value="查询"/>
+                <input type="reset" name="Reset" value="清空" onclick="submintForm2()"/>
+
+            </td>
+          </tr>
+          </table>
+    <table width="90%"  id="fromtable2" cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6">
+           <tr  bgcolor="#ffffff" >
+           <td align="center"    width="50px">序号</td>
+           <td align="center"   width="100px">品牌</td>
+           <td align="center"   width="100px">机型</td>
+           <td align="center"   width="100px">类型</td>
+           <td align="center"   width="100px">数量</td>
+           <td align="center"    width="100px">员工ID</td>
+           <td align="center"   width="100px">促销员</td>
+           <td align="center"   width="100px">主管</td>
+
+           </tr>
+       </table>
+    <iframe id="pageiframe" width="90%" height="100%" frameborder="0" name="userlist" src="/oa/userProductOrderQuery/" ></iframe>
+
+</div>
+</div>
+
+</form>
+{% endblock %}

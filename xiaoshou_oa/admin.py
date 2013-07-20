@@ -2,7 +2,7 @@
 #author:u'王健'
 #Date: 13-7-19
 #Time: 下午9:01
-from xiaoshou_oa.models import ProductType, ProductBrands, Gift, ProductModel, Product
+from xiaoshou_oa.models import ProductType, ProductBrands, Gift, ProductModel, ProductOrder
 
 __author__ = u'王健'
 
@@ -38,7 +38,8 @@ admin.site.register(ProductType,ProductTypeAdmin)
 admin.site.register(ProductBrands,ProductBrandsAdmin)
 admin.site.register(Gift,GiftAdmin)
 admin.site.register(ProductModel,ProductModelAdmin)
-admin.site.register(Product,ProductAdmin)
+admin.site.register(ProductOrder)
+# admin.site.register(Product,ProductAdmin)
 
 
 
