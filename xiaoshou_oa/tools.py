@@ -23,7 +23,15 @@ def client_login_required(func=None):
     def test(request, *args, **kwargs):
         if not isinstance(request.user,AnonymousUser):
             if  request.user.is_active:
-                return func(request, *args, **kwargs)
+                deviceid=request.REQUEST.get('deviceid',None)
+                serverdeviceid=request.user.person.deviceid
+                if not serverdeviceid:
+                    request.user.person.deviceid=deviceid
+                    request.user.person.save()
+                elif deviceid!=serverdeviceid:
+                    return getResult(False,u'用户使用的设备与注册设备不一致，请使用注册的设备。', None,404)
+                else:
+                    return func(request, *args, **kwargs)
             else:
                 return getResult(False,u'用户已被禁用，需要重新登录。', None,404)
         else:

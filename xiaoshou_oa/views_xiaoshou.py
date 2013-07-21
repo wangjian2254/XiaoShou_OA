@@ -15,18 +15,25 @@ from django.contrib.auth.models import User
 @login_required
 @permission_required
 def userXiaoShouList(request):
-    return render_to_response('oa/userxiaoshouList.html', RequestContext(request, { 'depatementlist':Depatement.objects.all(),'giftlist':Gift.objects.all(),'productTypelist':ProductType.objects.all(), 'productBrandslist':ProductBrands.objects.all(), 'productModellist':ProductModel.objects.all().order_by('brands'), 'today':datetime.datetime.now()}))
+    return render_to_response('oa/userxiaoshouList.html', RequestContext(request,
+                                                                         {'depatementlist': Depatement.objects.all(),
+                                                                          'giftlist': Gift.objects.all(),
+                                                                          'productTypelist': ProductType.objects.all(),
+                                                                          'productBrandslist': ProductBrands.objects.all(),
+                                                                          'productModellist': ProductModel.objects.all().order_by(
+                                                                              'brands'),
+                                                                          'today': datetime.datetime.now()}))
 
 
-def queryRecord(users,product,startdate,enddate,dategroup,productTypeid,giftid):
+def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, giftid):
     query = ProductOrder.objects.filter(user__in=users).filter(product__in=product)
     query = query.filter(clientDate__gte=startdate).filter(clientDate__lte=enddate)
     if productTypeid:
-        types=ProductType.objects.filter(pk__in=productTypeid)
-        query=query.filter(type__in=types)
+        types = ProductType.objects.filter(pk__in=productTypeid)
+        query = query.filter(type__in=types)
     if giftid:
-        gifts=Gift.objects.filter(pk__in=giftid)
-        query=query.filter(gift__in=gifts)
+        gifts = Gift.objects.filter(pk__in=giftid)
+        query = query.filter(gift__in=gifts)
     query = query.order_by('clientDate').order_by('clientTime').order_by('office').order_by('user')
 
     # datadict={}
@@ -35,17 +42,17 @@ def queryRecord(users,product,startdate,enddate,dategroup,productTypeid,giftid):
     #         datadict['%s_%s'%(order.clientDate,order.office_id)]=[]
     #         dategroup.append({'date':order.clientDate,'office':order.office,'query':datadict['%s_%s'%(order.clientDate,order.office_id)]})
     #     datadict['%s_%s'%(order.clientDate,order.office_id)].append(order)
-    datelist=[]
-    officelist=[]
-    userlist=[]
-    productTypeList=[]
-    productList=[]
-    orderdict={}
+    datelist = []
+    officelist = []
+    userlist = []
+    productTypeList = []
+    productList = []
+    orderdict = {}
     for order in query:
-        k='%s-%s-%s-%s-%s'%(order.clientDate,order.office_id,order.user_id,order.type_id,order.product_id)
+        k = '%s-%s-%s-%s-%s' % (order.clientDate, order.office_id, order.user_id, order.type_id, order.product_id)
         if not orderdict.has_key(k):
-            orderdict[k]={'order':order,'num':0}
-        orderdict[k]['num']+=1
+            orderdict[k] = {'order': order, 'num': 0}
+        orderdict[k]['num'] += 1
         if order.clientDate not in datelist:
             datelist.append(order.clientDate)
         if order.office_id not in officelist:
@@ -59,26 +66,26 @@ def queryRecord(users,product,startdate,enddate,dategroup,productTypeid,giftid):
     for date in datelist:
 
         for officeid in officelist:
-            row={}
-            row['date']=date
-            row['office']=Office.objects.get(pk=officeid)
-            row['query']=[]
+            row = {}
+            row['date'] = date
+            row['office'] = Office.objects.get(pk=officeid)
+            row['query'] = []
             for userid in userlist:
                 for typeid in productTypeList:
                     for productid in productList:
-                        k='%s-%s-%s-%s-%s'%(date,officeid,userid,typeid,productid)
+                        k = '%s-%s-%s-%s-%s' % (date, officeid, userid, typeid, productid)
                         if not orderdict.has_key(k):
                             continue
-                        porder={}
-                        porder['user']=orderdict[k]['order'].user
-                        porder['order']=orderdict[k]
-                        porder['product']=orderdict[k]['order'].product
+                        porder = {}
+                        porder['user'] = orderdict[k]['order'].user
+                        porder['order'] = orderdict[k]
+                        porder['product'] = orderdict[k]['order'].product
                         row['query'].append(porder)
             dategroup.append(row)
 
 
 def getDepartmentByDepartment(depates):
-    d=set()
+    d = set()
     for depat in Depatement.objects.filter(fatherDepart__in=depates):
         d.add(depat)
     return d
@@ -100,44 +107,84 @@ def userProductOrderQuery(request):
     startdate = request.REQUEST.get('startdate')
     enddate = request.REQUEST.get('enddate')
     if not startdate or not enddate:
-        startdate=datetime.datetime.now().strftime('%Y-%m-%d')
-        enddate=datetime.datetime.now().strftime('%Y-%m-%d')
-    # startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
+        startdate = datetime.datetime.now().strftime('%Y-%m-%d')
+        enddate = datetime.datetime.now().strftime('%Y-%m-%d')
+        # startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     # enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
     if depatementid:
-        d=[]
-        depatement=Depatement.objects.get(pk=depatementid)
+        d = []
+        depatement = Depatement.objects.get(pk=depatementid)
         d.append(depatement)
 
         for i in range(5):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)
 
-        users=[]
+        users = []
         for u in Person.objects.filter(depate__in=d):
             users.append(u.user)
 
 
     else:
-        users=User.objects.filter(is_superuser=False)
-    # if productid:
+        users = User.objects.filter(is_superuser=False)
+        # if productid:
     #     product = Product.objects.filter(pk__in=productid)
     # el
     if productModelid:
-        productmodels=ProductModel.objects.filter(pk__in=productModelid)
+        productmodels = ProductModel.objects.filter(pk__in=productModelid)
         # product=Product.objects.filter(brands__in=productmodels)
     elif productBrandsid:
-        productbrand=ProductBrands.objects.filter(pk__in=productBrandsid)
-        productmodels=ProductModel.objects.filter(brands__in=productbrand)
+        productbrand = ProductBrands.objects.filter(pk__in=productBrandsid)
+        productmodels = ProductModel.objects.filter(brands__in=productbrand)
         # product=Product.objects.filter(brands__in=productmodels)
     else:
-        productmodels=ProductModel.objects.all()
+        productmodels = ProductModel.objects.all()
 
-
-
-    dategroup=[]
-    queryRecord(users,productmodels,startdate,enddate,dategroup,productTypeid,giftid)
+    dategroup = []
+    queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, giftid)
     return render_to_response('oa/userxiaoshouListPage.html', RequestContext(request, {'query': dategroup}))
+
+
+@client_login_required
+def userXiaoShouOrderUpdate(request):
+    '''
+    用户手机端上传销售记录
+    '''
+    id = request.REQUEST.get('id')
+    productid = request.REQUEST.get('ProductModel')
+    producttype = request.REQUEST.get('ProductType')
+    productgifts = request.REQUEST.getlist('Gift')
+    productoffice = request.REQUEST.get('Office')
+    imie = request.REQUEST.get('imie')
+    tel = request.REQUEST.get('tel', '')
+    orderNumber = request.REQUEST.get('order')
+    clientDate = request.REQUEST.get('clientDate')
+    clientTime = request.REQUEST.get('clientTime')
+
+    if not productid or not producttype or not productoffice or not imie or not orderNumber or not clientDate or not clientTime:
+        return getResult(False, u'数据不足，请录入必要数据')
+
+    if id:
+        order = ProductOrder()
+        order.user = request.user
+        order.serverDate = datetime.datetime.now().strftime('%Y-%m-%d')
+        order.clientDate = clientDate
+        order.clientTime = clientTime
+    else:
+        order = ProductOrder.objects.get(pk=id)
+
+    order.product = ProductModel.objects.get(pk=productid)
+    order.type = ProductType.objects.get(pk=producttype)
+    order.office = Office.objects.get(pk=productoffice)
+    order.gift = Gift.objects.filter(pk__in=productgifts)
+    order.imie = imie
+    order.tel = tel
+    order.orderNumber = orderNumber
+
+    order.save()
+
+    return getResult(True, u'数据提交成功.', order.id)
+
 
 #
 # @client_login_required

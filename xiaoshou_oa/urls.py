@@ -9,7 +9,7 @@ from xiaoshou_oa.views import top, menu, welcome
 from xiaoshou_oa.views_depatement import depatementAdd, depatementList, depatementSave, depatementDelete, depatementOpen, depatementPeople, depatementPeopleDel, depatementPeopleAdd
 from xiaoshou_oa.views_office import officeAdd, officeSave, check_office, officeList, officeDelete, officeOpen, calculateOffice, officeListClient, setGPSoffice
 from xiaoshou_oa.views_qiandao import qiandaoAdd, qiandaoSave, qiandaoDelete, qiandaoOpen, qiandaoList, check_qiandao, userQianDaoList, userQianDaoQuery, userqiandaoUploadClient, userQianDaoQueryClient, qiandaoListClient
-from xiaoshou_oa.views_user import userSave, userAdd, userList, userListPage, check_username, userDelete, userOpen, userPassword, clientLogin
+from xiaoshou_oa.views_user import userSave, userAdd, userList, userListPage, check_username, userDelete, userOpen, userPassword, clientLogin, userDeviceid
 from xiaoshou_oa.views_xiaoshou import userProductOrderQuery, userXiaoShouList
 
 
@@ -25,6 +25,7 @@ urlpatterns = patterns('^oa/$',
                         (r'^userDelete/$',userDelete),
                         (r'^userOpen/$',userOpen),
                         (r'^userPassword/$',userPassword),
+                        (r'^userDeviceid/$',userDeviceid),
                         (r'^userList/$',userList),
                         (r'^userListPage/$',userListPage),
 

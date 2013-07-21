@@ -145,6 +145,23 @@ def userPassword(request):
             return getResult(False, u'用户不存在')
     return getResult(False, u'请传递用户id')
 
+@login_required
+@permission_required
+def userDeviceid(request):
+    '''
+    重置用户设备
+    '''
+    id = request.REQUEST.get('userid')
+    if id:
+        try:
+            user = User.objects.get(pk=id)
+            user.person.deviceid=None
+            user.save()
+            return getResult(True, u'注销用户设备指纹成功，用户可以使用新的设备。')
+        except:
+            return getResult(False, u'用户不存在')
+    return getResult(False, u'请传递用户id')
+
 
 @login_required
 @permission_required
