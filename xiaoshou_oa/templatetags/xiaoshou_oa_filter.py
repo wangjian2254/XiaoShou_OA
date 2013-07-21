@@ -18,9 +18,12 @@ def erweima(adminform,object_name):
                     if field.field.value():
                         flag=False
                 elif  object_name=='ProductModel' and  field.field.name=='name':
-                    s+=u'"%s":"%s",'%(field.field.name,adminform.form.instance)
-                    if field.field.value():
-                        flag=False
+                    try:
+                        s+=u'"%s":"%s",'%(field.field.name,adminform.form.instance)
+                        if field.field.value():
+                            flag=False
+                    except:
+                        pass
                 elif field.field.name=='':
                     s+=u'"%s":"%s",'%(field.field.name,field.field.value())
                     if field.field.value():

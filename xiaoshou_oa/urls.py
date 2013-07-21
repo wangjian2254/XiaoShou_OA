@@ -10,7 +10,7 @@ from xiaoshou_oa.views_depatement import depatementAdd, depatementList, depateme
 from xiaoshou_oa.views_office import officeAdd, officeSave, check_office, officeList, officeDelete, officeOpen, calculateOffice, officeListClient, setGPSoffice
 from xiaoshou_oa.views_qiandao import qiandaoAdd, qiandaoSave, qiandaoDelete, qiandaoOpen, qiandaoList, check_qiandao, userQianDaoList, userQianDaoQuery, userqiandaoUploadClient, userQianDaoQueryClient, qiandaoListClient
 from xiaoshou_oa.views_user import userSave, userAdd, userList, userListPage, check_username, userDelete, userOpen, userPassword, clientLogin, userDeviceid
-from xiaoshou_oa.views_xiaoshou import userProductOrderQuery, userXiaoShouList
+from xiaoshou_oa.views_xiaoshou import userProductOrderQuery, userXiaoShouList, userXiaoShouOrderUpdate
 
 
 urlpatterns = patterns('^oa/$',
@@ -68,5 +68,6 @@ urlpatterns = patterns('^oa/$',
                         (r'^userQianDaoQueryClient/$',userQianDaoQueryClient),
                         (r'^qiandaoListClient/$',qiandaoListClient),
                         (r'^officeListClient/$',officeListClient),
+                        (r'^userXiaoShouOrderUpdate/$',userXiaoShouOrderUpdate),
 
                        )
