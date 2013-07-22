@@ -128,6 +128,7 @@
     {% endif %}
 </td>
 <td width="100px">{% if u.department_manager %}{{ u.department_manager.name }}{% else %}{% endif %}</td>
+<td width="100px">{% if u.person.deviceid %}{{ u.person.deviceid }}{% else %}未使用过{% endif %}</td>
 <td width="90px"><a href="javascript:deluser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');" id="del{{ u.id }}" {%if not u.is_active %}style="display: none;" {% endif %} >在职状态</a><a href="javascript:openuser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');" id="open{{ u.id }}" {% if u.is_active %} style="display: none;" {% endif %}><span style="color: red;">离职状态</span></a></td>
 <td>
     <a href="/oa/userAdd/?userid={{ u.id }}" target="mainFrame" title="更新"><img src="{{ STATIC_URL }}image/update.gif" border="0"/></a>
