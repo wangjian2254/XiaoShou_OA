@@ -93,15 +93,21 @@
         <td align="center"    width="100px" rowspan="2">员工ID</td>
         <td align="center"   width="100px" rowspan="2">姓名</td>
         {% for q in qiandao %}
-            <td colspan="4">{{ q.name }}</td>
+            <td>{{ q.name }}</td>
         {% endfor %}
         </tr>
 <tr  bgcolor="#ffffff" >
+
        {% for q in qiandao %}
-        <td align="center"   width="100px">厅台</td>
-        <td align="center"   >地址</td>
+           <td style="padding: 0px;">
+           <table  width="100%" style="height: 100%;"   cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6" >
+        <tr>
+               <td align="center"   width="100px">厅台</td>
+        <td align="center"   width="100px"  >地址</td>
         <td align="center"   width="70px">时间</td>
-        <td align="center"   width="50px">位置/时间</td>
+        <td align="center"   width="70px">位置/时间</td>
+          </tr> </table>
+           </td>
         {% endfor %}
 
         </tr>
@@ -114,11 +120,22 @@
 <td width="50px">{{ forloop.counter }}</td>
 <td width="70px">{{ u.user.username }}</td>
 <td width="70px">{{ u.user.get_full_name }}</td>
-    {% for uqd in u.qiandaolist %}
-        <td width="100px">{{ uqd.office.name }}</td>
-        <td width="100px">{{ uqd.address }}</td>
-        <td width="70px">{{ uqd.dateTime|date:"H:i" }}</td>
-        <td width="100px">{% if uqd.office.gps %}{% if uqd.officeDistance < mi %}合格{% else %}<span style="color:red;">过远</span>{% endif %}{% else %}0{% endif %}/{% if uqd.timeDistance %}合格{% else %}<span style="color:red;">迟到</span>{% endif %}</td>
+    {% for uqdlist in u.qiandaolist %}
+        <td width="370px"  style="padding: 0px;">
+        {% if uqdlist %}
+        <table  width="100%"   cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6" >
+        {% for uqd in uqdlist %}
+        <tr>
+            <td width="100px">{{ uqd.office.name }}</td>
+            <td width="100px">{{ uqd.address }}</td>
+            <td width="70px">{{ uqd.dateTime|date:"H:i" }}</td>
+            <td width="70px">{% if uqd.office.gps %}{% if uqd.officeDistance < mi %}合格{% else %}<span style="color:red;">过远</span>{% endif %}{% else %}0{% endif %}/{% if uqd.timeDistance %}合格{% else %}<span style="color:red;">迟到</span>{% endif %}</td>
+
+        </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        </td>
     {% endfor %}
 </tr>
 {% endfor %}

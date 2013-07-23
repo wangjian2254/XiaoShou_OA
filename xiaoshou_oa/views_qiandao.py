@@ -152,11 +152,13 @@ def queryRecord(users,qiandao,startdate,enddate,dategroup):
             datelist.append(date)
         if uqd.user_id not in userlist:
             userlist.append(uqd.user_id)
-        datadict['%s-%s-%s'%(date,uqd.user_id,uqd.qiandao_id)]=uqd
+        if not datadict.has_key('%s-%s-%s'%(date,uqd.user_id,uqd.qiandao_id)):
+            datadict['%s-%s-%s'%(date,uqd.user_id,uqd.qiandao_id)]=[]
+        datadict['%s-%s-%s'%(date,uqd.user_id,uqd.qiandao_id)].append(uqd)
     for date in datelist:
         row={}
         row['date']=date
-        row['rowspan']=3+len(qiandao)*4
+        row['rowspan']=3+len(qiandao)
         row['query']=[]
         for u in users:
             if u.id not in userlist and u.is_active==False:
@@ -224,7 +226,10 @@ def userQianDaoQueryClient(request):
     手机查询 签到信息
     '''
     qiandaoid = request.REQUEST.get('qiandaoid','').split(',')
-    qiandaoid.remove('')
+    try:
+        qiandaoid.remove('')
+    except:
+        pass
     startdate = request.REQUEST.get('startdate')
     enddate = request.REQUEST.get('enddate')
     if not startdate or not enddate:
@@ -232,11 +237,22 @@ def userQianDaoQueryClient(request):
     startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
     user=request.user
-    users=[user]
-    d=[]
-    for i in range(5):
-        u=getUserByDepartment(users,d)
-        users.extend(u)
+
+
+    if user.person.depate:
+        d=[]
+        depatement=user.person.depate
+        d.append(depatement)
+
+        for i in range(5):
+            for depat in getDepartmentByDepartment(d):
+                d.append(depat)
+
+        users=[]
+        for u in Person.objects.filter(depate__in=d):
+            users.append(u.user)
+    else:
+        users=[user]
 
     if qiandaoid:
         qiandao = QianDao.objects.filter(pk__in=qiandaoid)
