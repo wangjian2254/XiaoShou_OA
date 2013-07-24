@@ -164,23 +164,28 @@ def userXiaoShouOrderUpdate(request):
     if not productid or not producttype or not productoffice or not imie or not orderNumber or not clientDate or not clientTime:
         return getResult(False, u'数据不足，请录入必要数据')
 
-    if id:
+    if not id:
         order = ProductOrder()
         order.user = request.user
         order.serverDate = datetime.datetime.now().strftime('%Y-%m-%d')
         order.clientDate = clientDate
         order.clientTime = clientTime
+        msg=u'数据提交成功'
+
     else:
         order = ProductOrder.objects.get(pk=id)
+        msg=u'数据修改成功'
 
     order.product = ProductModel.objects.get(pk=productid)
     order.type = ProductType.objects.get(pk=producttype)
     order.office = Office.objects.get(pk=productoffice)
-    order.gift = Gift.objects.filter(pk__in=productgifts)
     order.imie = imie
     order.tel = tel
     order.orderNumber = orderNumber
 
+    order.save()
+    for g in Gift.objects.filter(pk__in=productgifts):
+        order.gift.add(g)
     order.save()
 
     return getResult(True, u'数据提交成功.', order.id)
