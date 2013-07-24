@@ -24,13 +24,13 @@ def erweima(adminform,object_name):
                             flag=False
                     except:
                         pass
-                elif field.field.name=='':
+                elif field.field.name=='name':
                     s+=u'"%s":"%s",'%(field.field.name,field.field.value())
                     if field.field.value():
                         flag=False
     s+=u'"class":"%s"}'%object_name
     if not flag:
-        return u'''<a href="http://qr.liantu.com/api.php?text=%s"><img src="http://qr.liantu.com/api.php?text=%s" border="0"/></a>'''%(urllib.quote(s.encode('utf-8')),urllib.quote(s.encode('utf-8')))
+        return u'''<a href="http://qr.liantu.com/api.php?text=%s"><img src="http://qr.liantu.com/api.php?text=%s" border="0"/></a><a href="https://chart.googleapis.com/chart?cht=qr&chs=300x300&choe=UTF-8&chld=L|2&chl=%s"><img src="https://chart.googleapis.com/chart?cht=qr&chs=300x300&choe=UTF-8&chld=L|2&chl=%s" border="0"/></a>'''%(urllib.quote(s.encode('utf-8')),urllib.quote(s.encode('utf-8')),urllib.quote(s.encode('utf-8')),urllib.quote(s.encode('utf-8')))
     return u'保存后才可以生成二维码'
 
 
