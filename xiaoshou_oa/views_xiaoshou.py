@@ -176,15 +176,15 @@ def userXiaoShouOrderUpdate(request):
         order = ProductOrder.objects.get(pk=id)
         msg=u'数据修改成功'
 
-    order.product = ProductModel.objects.get(pk=productid)
-    order.type = ProductType.objects.get(pk=producttype)
+    order.product = ProductModel.objects.get(flag=productid)
+    order.type = ProductType.objects.get(flag=producttype)
     order.office = Office.objects.get(pk=productoffice)
     order.imie = imie
     order.tel = tel
     order.orderNumber = orderNumber
 
     order.save()
-    for g in Gift.objects.filter(pk__in=productgifts):
+    for g in Gift.objects.filter(flag__in=productgifts):
         order.gift.add(g)
     order.save()
 

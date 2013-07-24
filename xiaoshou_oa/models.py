@@ -221,11 +221,11 @@ class ProductModel(models.Model):
 class ProductOrder(models.Model):
     product = models.ForeignKey(ProductModel, verbose_name=u'终端')
     type = models.ForeignKey(ProductType, verbose_name=u'合约类型')
-    gift = models.ManyToManyField(Gift, verbose_name=u'配套礼品')
+    gift = models.ManyToManyField(Gift,null=True,blank=True, verbose_name=u'配套礼品')
     user = models.ForeignKey(User, verbose_name=u'用户')
     office = models.ForeignKey(Office, verbose_name=u'厅台')
     imie = models.CharField(max_length=30, unique=True, verbose_name=u'imie', help_text=u'每个手机唯一')
-    tel = models.CharField(max_length=15, verbose_name=u'客户手机号', help_text=u'客户的联系方式')
+    tel = models.CharField(max_length=15,null=True,blank=True, verbose_name=u'客户手机号', help_text=u'客户的联系方式')
     orderNumber = models.CharField(max_length=50, verbose_name=u'订单id', help_text=u'同一次提交，保持一致')
 
     serverDate = models.CharField(max_length=10, verbose_name=u'服务器端日期', help_text=u'2013-06-07')
