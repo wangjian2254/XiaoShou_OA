@@ -15,10 +15,56 @@ function submintForm2(){
     setTimeout(submintForm,1000);
 
 }
-function getProductByBrands(id){
+
+function brandsallsubmintForm(){
+    $j("input[name='productBrandsid']").each(function(i,inp){
+        if($j('#productBrandsall').attr('checked')){
+            $j(inp).attr('checked',true);
+        }else{
+            $j(inp).attr('checked',false);
+        }
+
+    });
+    submintForm();
 
 }
-function getProductByModel(id){
+
+function modelallsubmintForm(){
+    $j("input[name='productModelid']").each(function(i,inp){
+        if($j('#productModelall').attr('checked')){
+            $j(inp).attr('checked',true);
+        }else{
+            $j(inp).attr('checked',false);
+        }
+
+    });
+    submintForm();
+
+}
+
+function typeallsubmintForm(){
+    $j("input[name='productTypeid']").each(function(i,inp){
+        if($j('#productTypeall').attr('checked')){
+            $j(inp).attr('checked',true);
+        }else{
+            $j(inp).attr('checked',false);
+        }
+
+    });
+    submintForm();
+
+}
+
+function giftallsubmintForm(){
+    $j("input[name='giftid']").each(function(i,inp){
+        if($j('#giftall').attr('checked')){
+            $j(inp).attr('checked',true);
+        }else{
+            $j(inp).attr('checked',false);
+        }
+
+    });
+    submintForm();
 
 }
 </script>
@@ -45,6 +91,7 @@ function getProductByModel(id){
             <td style="padding-left:5px;"  width="100px" >查询身份:</td>
 
             <td>
+
                 <select name="depatementid" onselect="submintForm()"  onchange="submintForm()"  style="width:300px;">
                          <option value="">所有人</option>
                       {% for d in depatementlist %}
@@ -61,6 +108,7 @@ function getProductByModel(id){
             <td style="padding-left:5px;"  width="100px" >品牌:</td>
 
             <td>
+                <input type="checkbox"   id="productBrandsall" onclick="brandsallsubmintForm()" /><label>全部</label>
               {% for d in productBrandslist %}
                      <input type="checkbox" name="productBrandsid"   value="{{ d.id }}" id="productBrands{{ d.id }}" onclick="submintForm()" /><label>{{ d.name }}</label>
                      {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
@@ -71,6 +119,7 @@ function getProductByModel(id){
             <td style="padding-left:5px;"  width="100px" >机型:</td>
 
             <td>
+                <input type="checkbox"  id="productModelall" onclick="modelallsubmintForm()" /><label>全部</label>
               {% for d in productModellist %}
                      <input type="checkbox" name="productModelid"   value="{{ d.id }}" id="productModel{{ d.id }}"  onclick="submintForm()" /><label>{{ d.name }}</label>
                      {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
@@ -82,8 +131,9 @@ function getProductByModel(id){
             <td style="padding-left:5px;"  width="100px" >类型:</td>
 
             <td>
+                <input type="checkbox"    id="productTypeall" onclick="typeallsubmintForm()"  checked="checked" /><label>全部</label>
               {% for d in productTypelist %}
-                     <input type="checkbox" name="productTypeid"   value="{{ d.id }}" onclick="submintForm()" /><label>{{ d.name }}</label>
+                     <input type="checkbox" name="productTypeid"   value="{{ d.id }}" onclick="submintForm()"  checked="checked" /><label>{{ d.name }}</label>
                      {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
               {% endfor %}
                </td>
@@ -92,8 +142,9 @@ function getProductByModel(id){
             <td style="padding-left:5px;"  width="100px" >配送礼物:</td>
 
             <td>
+                <input type="checkbox"    id="giftall" onclick="giftallsubmintForm()" checked="checked" /><label>全部</label>
               {% for d in giftlist %}
-                     <input type="checkbox" name="giftid"   value="{{ d.id }}" onclick="submintForm()" /><label>{{ d.name }}</label>
+                     <input type="checkbox" name="giftid"   value="{{ d.id }}" onclick="submintForm()"  checked="checked" /><label>{{ d.name }}</label>
                      {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
               {% endfor %}
                </td>

@@ -95,7 +95,7 @@ def getDepartmentByDepartment(depates):
 @permission_required
 def userProductOrderQuery(request):
     '''
-    查询用户签到信息
+    查询用户销售记录
 
     '''
     depatementid = request.REQUEST.get('depatementid')
@@ -138,7 +138,7 @@ def userProductOrderQuery(request):
         productmodels = ProductModel.objects.filter(brands__in=productbrand)
         # product=Product.objects.filter(brands__in=productmodels)
     else:
-        productmodels = ProductModel.objects.all()
+        productmodels = []
 
     dategroup = []
     queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, giftid)
@@ -178,7 +178,7 @@ def userXiaoShouOrderUpdate(request):
 
     order.product = ProductModel.objects.get(flag=productid)
     order.type = ProductType.objects.get(flag=producttype)
-    order.office = Office.objects.get(flag=productoffice)
+    order.office = Office.objects.get(pk=productoffice)
     order.imie = imie
     order.tel = tel
     order.orderNumber = orderNumber

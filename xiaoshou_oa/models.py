@@ -221,7 +221,7 @@ class ProductModel(models.Model):
 class ProductOrder(models.Model):
     product = models.ForeignKey(ProductModel, verbose_name=u'终端')
     type = models.ForeignKey(ProductType, verbose_name=u'合约类型')
-    gift = models.ManyToManyField(Gift, verbose_name=u'配套礼品')
+    gift = models.ManyToManyField(Gift,null=True,blank=True, verbose_name=u'配套礼品')
     user = models.ForeignKey(User, verbose_name=u'用户')
     office = models.ForeignKey(Office, verbose_name=u'厅台')
     imie = models.CharField(max_length=30, unique=True, verbose_name=u'imie', help_text=u'每个手机唯一')
