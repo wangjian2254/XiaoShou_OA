@@ -3,10 +3,12 @@
 import json
 
 import datetime
+import urllib
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from XiaoShouOA import settings
 from xiaoshou_oa.models import QianDao, UserQianDao, Office, Person, Depatement
 from xiaoshou_oa.tools import getResult, permission_required, client_login_required
 from django.contrib.auth.models import User
@@ -159,18 +161,24 @@ def queryRecord(users,qiandao,startdate,enddate,dategroup):
         row={}
         row['date']=date
         row['rowspan']=3+len(qiandao)
+        row['rowspan2']=3+len(qiandao)*5
         row['query']=[]
         for u in users:
             if u.id not in userlist and u.is_active==False:
                 continue
             userrow={}
-            userrow['user']=u
+            userrow['user']={'username':getattr(u,'username',''),'get_full_name':getattr(u,'first_name',''),}
             userrow['qiandaolist']=[]
             for qd in qiandao:
                 if datadict.has_key('%s-%s-%s'%(date,u.id,qd.id)):
-                    userrow['qiandaolist'].append(datadict['%s-%s-%s'%(date,u.id,qd.id)])
+                    oo=datadict['%s-%s-%s'%(date,u.id,qd.id)]
+                    l=[]
+                    for o in oo:
+                        q={'officename':getattr(getattr(o,'office',''),'name',''),'officegps':getattr(getattr(o,'office',''),'gps',''),'address':getattr(o,'address',''),'dateTime':o.dateTime.strftime('%H:%M'),'gpsdistance':o.officeDistance(),'time':o.timeDistance()}
+                        l.append(q)
+                    userrow['qiandaolist'].append(l)
                 else:
-                    userrow['qiandaolist'].append({})
+                    userrow['qiandaolist'].append([])
             row['query'].append(userrow)
         dategroup.append(row)
 
@@ -183,6 +191,7 @@ def userQianDaoQuery(request):
     查询用户签到信息
 
     '''
+    filename=''
     depatementid = request.REQUEST.get('depatementid')
     qiandaoid = request.REQUEST.getlist('qiandaoid')
     mi = request.REQUEST.get('mi',800)
@@ -195,11 +204,13 @@ def userQianDaoQuery(request):
     if not startdate or not enddate:
         startdate=datetime.datetime.now().strftime('%Y-%m-%d')
         enddate=datetime.datetime.now().strftime('%Y-%m-%d')
+    filename+='%s_%s'%(startdate,enddate)
     startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
     if depatementid:
         d=[]
         depatement=Depatement.objects.get(pk=depatementid)
+        filename+='_%s'%depatement.fullname()
         d.append(depatement)
 
         for i in range(5):
@@ -211,29 +222,125 @@ def userQianDaoQuery(request):
             users.append(u.user)
     else:
         users=User.objects.filter(is_superuser=False)
+        filename+=u'_所有人'
     if qiandaoid:
         qiandao = QianDao.objects.filter(pk__in=qiandaoid)
     else:
         qiandao=[]
     dategroup=[]
     queryRecord(users,qiandao,startdate,enddate,dategroup)
+
+    isExcel=request.REQUEST.get('isExcel',None)
+    if isExcel:
+        filename=qiandaoXls(filename,dategroup,mi)
+        if filename:
+            return HttpResponseRedirect(settings.STATIC_URL+'upload/%s'%urllib.quote(filename.encode('utf-8')))
     return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup,'qiandao':qiandao,'mi':mi}))
 
+def qiandaoXls(filename,dategroup,mi):
+    import uuid
+    filename+='.xls'
+    import os
+    if os.path.exists(os.path.join(settings.STATIC_ROOT,filename)):
+        os.remove(os.path.join(settings.STATIC_ROOT,filename))
+    import xlwt
+    from xlwt import Font,Alignment
+    style1=xlwt.XFStyle()
+    font1=Font()
+    font1.height=320
+    font1.name=u'仿宋'
+    style1.font=font1
+    algn=Alignment()
+    algn.horz=Alignment.HORZ_RIGHT
+    style1.alignment=algn
+    style0=xlwt.XFStyle()
+    algn0=Alignment()
+    algn0.horz=Alignment.HORZ_CENTER
+    algn0.vert=Alignment.VERT_CENTER
+    font=Font()
+    font.height=320
+    font.bold=False
+    font.name=u'仿宋'
+    style0.alignment=algn0
+    style0.font=font
+    style3=xlwt.XFStyle()
+    algn3=Alignment()
+    algn3.horz=Alignment.HORZ_CENTER
+    font3=Font()
+    font3.height=320
+    font3.bold=False
+    font1.name=u'仿宋'
+    style3.alignment=algn3
+    style3.font=font3
+    pattern = xlwt.Pattern()
+    pattern.pattern = xlwt.Pattern.SOLID_PATTERN
+    pattern.pattern_fore_colour =2
+    style3.pattern=pattern
+    wb=xlwt.Workbook()
+    style2=xlwt.XFStyle()
+    algn2=Alignment()
+    algn2.horz=Alignment.HORZ_LEFT
+    font2=Font()
+    font2.height=350
+    font2.bold=True
+    font1.name=u'仿宋'
+    style2.alignment=algn2
+    style2.font=font2
+    wb=xlwt.Workbook()
+    ws=wb.add_sheet(u"签到报表",cell_overwrite_ok=True)
+    rownum=0
+    usernum=1
 
-@client_login_required
+    for data in dategroup:
+        ws.write_merge(rownum,rownum,0,data['rowspan2'],u'日期：%s'%(data['date'],),style2)
+        rownum+=1
+        tempnum=0
+        for query in data['query']:
+            for i,rows in enumerate(query['qiandaolist']):
+                for j,row in enumerate(rows):
+                    ws.write_merge(rownum+j,rownum+j,3+i*4+0,3+i*4+0,row['officename'],style0)
+                    ws.write_merge(rownum+j,rownum+j,3+i*4+1,3+i*4+1,row['address'],style0)
+                    ws.write_merge(rownum+j,rownum+j,3+i*4+2,3+i*4+2,row['dateTime'],style0)
+                    if row['officegps']:
+                        if row['gpsdistance']<mi:
+                            ws.write_merge(rownum+j,rownum+j,3+i*4+3,3+i*4+3,u'合格',style0)
+                        else:
+                            ws.write_merge(rownum+j,rownum+j,3+i*4+3,3+i*4+3,u'不合格',style3)
+                    else:
+                        ws.write_merge(rownum+j,rownum+j,3+i*4+3,3+i*4+3,u'0',style0)
+                    if row['time']:
+                        ws.write_merge(rownum+j,rownum+j,3+i*4+4,3+i*4+4,u'合格',style0)
+                    else:
+                        ws.write_merge(rownum+j,rownum+j,3+i*4+4,3+i*4+4,u'不合格',style3)
+                    if tempnum<j:
+                        tempnum=j
+            ws.write_merge(rownum,rownum+tempnum,0,0,usernum,style0)
+            ws.write_merge(rownum,rownum+tempnum,1,1,query['user']['username'],style0)
+            ws.write_merge(rownum,rownum+tempnum,2,2,query['user']['get_full_name'],style0)
+
+            rownum+=tempnum+1
+            usernum+=1
+
+    ws.col(4).width=0x0d00 + 7000
+    wb.save(settings.STATIC_ROOT+'/upload/'+filename)
+    return filename
+
+
+# @client_login_required
 def userQianDaoQueryClient(request):
     '''
     手机查询 签到信息
     '''
-    qiandaoid = request.REQUEST.get('qiandaoid','').split(',')
+    qiandaoid = request.REQUEST.getlist('qiandaoid')
     try:
         qiandaoid.remove('')
     except:
         pass
-    startdate = request.REQUEST.get('startdate')
-    enddate = request.REQUEST.get('enddate')
+    startdate = request.REQUEST.get('startdate','2013-07-01')
+    enddate = request.REQUEST.get('enddate','2013-07-29')
     if not startdate or not enddate:
-        raise Http404
+        startdate=datetime.datetime.now().strftime('%Y-%m-%d')
+        enddate=datetime.datetime.now().strftime('%Y-%m-%d')
     startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
     user=request.user
@@ -257,15 +364,10 @@ def userQianDaoQueryClient(request):
     if qiandaoid:
         qiandao = QianDao.objects.filter(pk__in=qiandaoid)
     else:
-        qiandao=[]
+        qiandao=QianDao.objects.all()
     dategroup=[]
     queryRecord(users,qiandao,startdate,enddate,dategroup)
-    querylist=[]
-    for datedict in dategroup:
-        querylist.append({'date':datedict['date'], 'query':[]})
-        for uqd in datedict['query']:
-            querylist[-1]['query'].append({'id':uqd.pk, 'userid':uqd.user.pk ,'username':uqd.user.username, 'truename':uqd.user.get_full_name, 'dateTime':uqd.dateTime.strftime('%H:%M'), 'gps':uqd.gps, 'address':uqd.address, 'officeid':uqd.office.pk, 'office':uqd.office.name})
-    return getResult(True,u'获取数据成功',querylist)
+    return getResult(True,u'获取数据成功',dategroup)
 
 
 @client_login_required

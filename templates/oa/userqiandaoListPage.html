@@ -126,10 +126,10 @@
         <table  width="100%"   cellpadding="1" cellspacing="1" border="0" bgcolor="#D5E3E6" >
         {% for uqd in uqdlist %}
         <tr>
-            <td width="100px">{{ uqd.office.name }}</td>
+            <td width="100px">{{ uqd.officename }}</td>
             <td width="100px">{{ uqd.address }}</td>
-            <td width="70px">{{ uqd.dateTime|date:"H:i" }}</td>
-            <td width="70px">{% if uqd.office.gps %}{% if uqd.officeDistance < mi %}合格{% else %}<span style="color:red;">过远</span>{% endif %}{% else %}0{% endif %}/{% if uqd.timeDistance %}合格{% else %}<span style="color:red;">迟到</span>{% endif %}</td>
+            <td width="70px">{{ uqd.dateTime}}</td>
+            <td width="70px">{% if uqd.officegps %}{% if uqd.gpsdistance < mi %}合格{% else %}<span style="color:red;">过远</span>{% endif %}{% else %}0{% endif %}/{% if uqd.time %}合格{% else %}<span style="color:red;">迟到</span>{% endif %}</td>
 
         </tr>
             {% endfor %}

@@ -14,6 +14,10 @@ class Depatement(models.Model):
                                      verbose_name=u'父级部门', help_text=u'部门隶属关系')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
+    def fullname(self):
+        if self.manager:
+            return u'%s_%s'%(self.manager.get_full_name(),self.name)
+        return u'空职务_%s'%(self.name)
     def __unicode__(self):
         return u'%s_%s' % (self.manager.get_full_name(), self.name)
 

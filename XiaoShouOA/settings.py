@@ -57,7 +57,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -83,6 +83,7 @@ STATICFILES_DIRS = (
     ("css", os.path.join(STATIC_ROOT,'css')),
     ("image", os.path.join(STATIC_ROOT,'image')),
     ("js", os.path.join(STATIC_ROOT,'js')),
+    ("upload", os.path.join(STATIC_ROOT,'upload')),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
