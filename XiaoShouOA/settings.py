@@ -83,6 +83,7 @@ STATICFILES_DIRS = (
     ("css", os.path.join(STATIC_ROOT,'css')),
     ("image", os.path.join(STATIC_ROOT,'image')),
     ("js", os.path.join(STATIC_ROOT,'js')),
+    ("upload", os.path.join(STATIC_ROOT,'upload')),
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
