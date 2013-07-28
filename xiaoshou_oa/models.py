@@ -101,6 +101,10 @@ class UserQianDao(models.Model):
 class DocumentKind(models.Model):
     name = models.CharField(max_length=30, unique=True, verbose_name=u'文档分类', help_text=u'文档的分类')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+
+
+    class Meta():
+        verbose_name=u'文档分类'
     def __unicode__(self):
         return self.name
 
@@ -112,6 +116,10 @@ class Document(models.Model):
     show = models.IntegerField(default=1, verbose_name=u'浏览次数', help_text=u'浏览文档的次数')
     content = models.TextField(blank=True, null=True, verbose_name=u'文档内容', help_text=u'文档内容的段')
     isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+
+    class Meta():
+        verbose_name=u'文档'
+
     def __unicode__(self):
         return self.title
 

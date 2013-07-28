@@ -2,7 +2,7 @@
 #author:u'王健'
 #Date: 13-7-19
 #Time: 下午9:01
-from xiaoshou_oa.models import ProductType, ProductBrands, Gift, ProductModel, ProductOrder
+from xiaoshou_oa.models import ProductType, ProductBrands, Gift, ProductModel, ProductOrder, DocumentKind, Document
 
 __author__ = u'王健'
 
@@ -39,7 +39,20 @@ admin.site.register(ProductBrands,ProductBrandsAdmin)
 admin.site.register(Gift,GiftAdmin)
 admin.site.register(ProductModel,ProductModelAdmin)
 admin.site.register(ProductOrder)
-# admin.site.register(Product,ProductAdmin)
+
+class DocumentKindAdmin(admin.ModelAdmin):
+    list_display = ('name','isdel')
+    list_filter = ('isdel',)
+    search_fields=('name',)
+
+admin.site.register(DocumentKind,DocumentKindAdmin)
+
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ('title','kind','dateTime','author','show','isdel')
+    list_filter = ('kind','dateTime','isdel',)
+    search_fields=('title','kind__name',)
+
+admin.site.register(Document,DocumentAdmin)
 
 
 
