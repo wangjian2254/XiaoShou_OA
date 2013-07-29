@@ -233,18 +233,15 @@ def userQianDaoQuery(request):
     isExcel=request.REQUEST.get('isExcel',None)
     if isExcel:
         response=HttpResponse(mimetype=u'application/ms-excel')
-        qiandaoXls(filename,dategroup,mi,response)
+        qiandaoXls(filename,qiandao,dategroup,mi,response)
         return response
             # return HttpResponseRedirect(settings.STATIC_URL+'upload/%s'%urllib.quote(filename.encode('utf-8')))
     return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup,'qiandao':qiandao,'mi':mi}))
 
-def qiandaoXls(filename,dategroup,mi,response):
+def qiandaoXls(filename,qiandao,dategroup,mi,response):
     import uuid
-    filename+='.xls'
+    filename+=u'.xls'
     response['Content-Disposition'] = (u'attachment;filename=%s'%filename).encode('utf-8')
-    import os
-    if os.path.exists(os.path.join(settings.STATIC_ROOT,filename)):
-        os.remove(os.path.join(settings.STATIC_ROOT,filename))
     import xlwt
     from xlwt import Font,Alignment
     style1=xlwt.XFStyle()
@@ -290,9 +287,24 @@ def qiandaoXls(filename,dategroup,mi,response):
     style2.font=font2
     wb=xlwt.Workbook()
     ws=wb.add_sheet(u"签到报表",cell_overwrite_ok=True)
-    rownum=0
+    rownum=2
     usernum=1
-
+    ws.write_merge(0,1,0,0,u'序号',style2)
+    ws.write_merge(0,1,1,1,u'员工ID',style2)
+    ws.col(1).width=0x0d00 +3000
+    ws.write_merge(0,1,2,2,u'姓名',style2)
+    ws.col(2).width=0x0d00 +3000
+    for i,q in enumerate(qiandao):
+        ws.write_merge(0,0,5*i+3,5*i+6,q.name,style2)
+        ws.write_merge(1,1,5*i+3,5*i+3,u'厅台',style2)
+        ws.col(5*i+3).width=0x0d00 + 7000
+        ws.write_merge(1,1,5*i+4,5*i+4,u'地址',style2)
+        ws.col(5*i+4).width=0x0d00 + 9000
+        ws.write_merge(1,1,5*i+5,5*i+5,u'时间',style2)
+        ws.write_merge(1,1,5*i+6,5*i+6,u'位置判断',style2)
+        ws.col(6).width=0x0d00 +3000
+        ws.write_merge(1,1,5*i+7,5*i+7,u'时间判读',style2)
+        ws.col(7).width=0x0d00 +3000
     for data in dategroup:
         ws.write_merge(rownum,rownum,0,data['rowspan2'],u'日期：%s'%(data['date'],),style2)
         rownum+=1
@@ -300,20 +312,20 @@ def qiandaoXls(filename,dategroup,mi,response):
         for query in data['query']:
             for i,rows in enumerate(query['qiandaolist']):
                 for j,row in enumerate(rows):
-                    ws.write_merge(rownum+j,rownum+j,3+i*4+0,3+i*4+0,row['officename'],style0)
-                    ws.write_merge(rownum+j,rownum+j,3+i*4+1,3+i*4+1,row['address'],style0)
-                    ws.write_merge(rownum+j,rownum+j,3+i*4+2,3+i*4+2,row['dateTime'],style0)
+                    ws.write_merge(rownum+j,rownum+j,3+i*5+0,3+i*5+0,row['officename'],style0)
+                    ws.write_merge(rownum+j,rownum+j,3+i*5+1,3+i*5+1,row['address'],style0)
+                    ws.write_merge(rownum+j,rownum+j,3+i*5+2,3+i*5+2,row['dateTime'],style0)
                     if row['officegps']:
                         if row['gpsdistance']<mi:
-                            ws.write_merge(rownum+j,rownum+j,3+i*4+3,3+i*4+3,u'合格',style0)
+                            ws.write_merge(rownum+j,rownum+j,3+i*5+3,3+i*5+3,u'合格',style0)
                         else:
-                            ws.write_merge(rownum+j,rownum+j,3+i*4+3,3+i*4+3,u'不合格',style3)
+                            ws.write_merge(rownum+j,rownum+j,3+i*5+3,3+i*5+3,u'不合格',style3)
                     else:
-                        ws.write_merge(rownum+j,rownum+j,3+i*4+3,3+i*4+3,u'0',style0)
+                        ws.write_merge(rownum+j,rownum+j,3+i*5+3,3+i*5+3,u'0',style0)
                     if row['time']:
-                        ws.write_merge(rownum+j,rownum+j,3+i*4+4,3+i*4+4,u'合格',style0)
+                        ws.write_merge(rownum+j,rownum+j,3+i*5+4,3+i*5+4,u'合格',style0)
                     else:
-                        ws.write_merge(rownum+j,rownum+j,3+i*4+4,3+i*4+4,u'不合格',style3)
+                        ws.write_merge(rownum+j,rownum+j,3+i*5+4,3+i*5+4,u'不合格',style3)
                     if tempnum<j:
                         tempnum=j
             ws.write_merge(rownum,rownum+tempnum,0,0,usernum,style0)
@@ -323,7 +335,7 @@ def qiandaoXls(filename,dategroup,mi,response):
             rownum+=tempnum+1
             usernum+=1
 
-    ws.col(4).width=0x0d00 + 7000
+
     wb.save(response)
     # return filename
 
