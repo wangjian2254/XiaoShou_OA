@@ -91,18 +91,18 @@
 
 {% for qmap in query %}
     <tr  bgcolor="#ffffff" >
-            <td align="left" style="padding-left: 20px;text-align: left;"  colspan="8">日期：{{ qmap.date }}&nbsp;&nbsp;&nbsp;&nbsp;厅台：{{ qmap.office.name }}</td>
+            <td align="left" style="padding-left: 20px;text-align: left;"  colspan="8">日期：{{ qmap.date }}&nbsp;&nbsp;&nbsp;&nbsp;厅台：{{ qmap.officename }}</td>
             </tr>
     {% for u in qmap.query %}
 <tr >
 <td width="50px">{{ forloop.counter }}</td>
-<td width="100px">{{ u.product.brands.name }}</td>
-<td width="100px">{{ u.product.name }}</td>
-<td width="100px">{{ u.order.order.type.name }}</td>
-<td width="100px">{{ u.order.num }}</td>
-<td width="100px">{{ u.user.username }}</td>
-<td width="100px">{{ u.user.get_full_name }}</td>
-<td width="100px">{{ u.user.person.depate.manager.get_full_name }}</td>
+<td width="100px">{{ u.productbrandsname }}</td>
+<td width="100px">{{ u.productname }}</td>
+<td width="100px">{{ u.ordertypename }}</td>
+<td width="100px">{{ u.ordernum }}</td>
+<td width="100px">{{ u.username }}</td>
+<td width="100px">{{ u.get_full_name }}</td>
+<td width="100px">{{ u.managername }}</td>
 
 </tr>
 {% endfor %}

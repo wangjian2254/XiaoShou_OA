@@ -1,12 +1,15 @@
 #coding=utf-8
 # Create your views here.
+import StringIO
 import json
 
 import datetime
+import urllib
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from XiaoShouOA import settings
 from xiaoshou_oa.models import ProductType, ProductBrands, ProductModel, ProductOrder, Depatement, Gift, Office, Person
 from xiaoshou_oa.tools import getResult, permission_required, client_login_required
 from django.contrib.auth.models import User
@@ -68,7 +71,7 @@ def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, gi
         for officeid in officelist:
             row = {}
             row['date'] = date
-            row['office'] = Office.objects.get(pk=officeid)
+            row['officename'] = Office.objects.get(pk=officeid).name
             row['query'] = []
             for userid in userlist:
                 for typeid in productTypeList:
@@ -77,9 +80,13 @@ def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, gi
                         if not orderdict.has_key(k):
                             continue
                         porder = {}
-                        porder['user'] = orderdict[k]['order'].user
-                        porder['order'] = orderdict[k]
-                        porder['product'] = orderdict[k]['order'].product
+                        porder['username'] = orderdict[k]['order'].user.username
+                        porder['managername'] = getattr(getattr(getattr(orderdict[k]['order'].user.person,'depate',''),'manager',''),'get_full_name','')
+                        porder['get_full_name'] = orderdict[k]['order'].user.get_full_name()
+                        porder['ordernum'] = orderdict[k]['num']
+                        porder['ordertypename']=orderdict[k]['order'].type.name
+                        porder['productname'] = orderdict[k]['order'].product.name
+                        porder['productbrandsname'] = orderdict[k]['order'].product.brands.name
                         row['query'].append(porder)
             dategroup.append(row)
 
@@ -106,16 +113,18 @@ def userProductOrderQuery(request):
     # productid = request.REQUEST.getlist('productid')
     startdate = request.REQUEST.get('startdate')
     enddate = request.REQUEST.get('enddate')
+    filename=''
     if not startdate or not enddate:
         startdate = datetime.datetime.now().strftime('%Y-%m-%d')
         enddate = datetime.datetime.now().strftime('%Y-%m-%d')
         # startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     # enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
+    filename+=u'%s_%s'%(startdate,enddate)
     if depatementid:
         d = []
         depatement = Depatement.objects.get(pk=depatementid)
         d.append(depatement)
-
+        filename+='_%s'%depatement.name
         for i in range(5):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)
@@ -127,6 +136,7 @@ def userProductOrderQuery(request):
 
     else:
         users = User.objects.filter(is_superuser=False)
+        filename+=u'_所有人'
         # if productid:
     #     product = Product.objects.filter(pk__in=productid)
     # el
@@ -142,8 +152,69 @@ def userProductOrderQuery(request):
 
     dategroup = []
     queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, giftid)
+
+    if request.REQUEST.get('isExcel'):
+        response=HttpResponse(mimetype=u'application/ms-excel')
+
+        queryExcel(filename,dategroup,response)
+        return response
     return render_to_response('oa/userxiaoshouListPage.html', RequestContext(request, {'query': dategroup}))
 
+
+def queryExcel(filename,dategroup,response):
+    filename+=u'.xls'
+    response['Content-Disposition'] = (u'attachment;filename=%s'%filename).encode('utf-8')
+    import xlwt
+    from xlwt import Font,Alignment
+    style1=xlwt.XFStyle()
+    font1=Font()
+    font1.height=360
+    font1.name=u'仿宋'
+    style1.font=font1
+    algn=Alignment()
+    algn.horz=Alignment.HORZ_LEFT
+    style1.alignment=algn
+    style1.font=font1
+    style0=xlwt.XFStyle()
+    algn0=Alignment()
+    algn0.horz=Alignment.HORZ_CENTER
+    font=Font()
+    font.height=320
+    font.bold=False
+    font.name=u'仿宋'
+    style0.alignment=algn0
+    style0.font=font
+    wb=xlwt.Workbook()
+    ws=wb.add_sheet(u"销售报表",cell_overwrite_ok=True)
+    rownum=0
+    ws.write_merge(rownum,rownum,0,0,u'序号',style0)
+    ws.write_merge(rownum,rownum,1,1,u'品牌',style0)
+    ws.write_merge(rownum,rownum,2,2,u'型号',style0)
+    ws.write_merge(rownum,rownum,3,3,u'类型',style0)
+    ws.write_merge(rownum,rownum,4,4,u'数量',style0)
+    ws.write_merge(rownum,rownum,5,5,u'账户',style0)
+    ws.write_merge(rownum,rownum,6,6,u'姓名',style0)
+    ws.write_merge(rownum,rownum,7,7,u'主管',style0)
+    rownum+=1
+    datanum=1
+    for data in dategroup:
+        ws.write_merge(rownum,rownum,0,7,u'日期：%s   厅台：%s'%(data['date'],data['officename']),style1)
+        rownum+=1
+        for i, row in enumerate(data['query']):
+            ws.write_merge(rownum,rownum,0,0,datanum,style0)
+            ws.write_merge(rownum,rownum,1,1,row['productbrandsname'],style0)
+            ws.write_merge(rownum,rownum,2,2,row['productname'],style0)
+            ws.write_merge(rownum,rownum,3,3,row['ordertypename'],style0)
+            ws.write_merge(rownum,rownum,4,4,row['ordernum'],style0)
+            ws.write_merge(rownum,rownum,5,5,row['username'],style0)
+            ws.write_merge(rownum,rownum,6,6,row['get_full_name'],style0)
+            ws.write_merge(rownum,rownum,7,7,row['managername'],style0)
+            datanum+=1
+            rownum+=1
+    for i in range(8):
+        ws.col(i).width=256*20
+    wb.save(response)
+    # wb.save(settings.STATIC_ROOT+'/upload/'+filename)
 
 @client_login_required
 def userXiaoShouOrderUpdate(request):
