@@ -5,7 +5,7 @@ import json
 import datetime
 import urllib
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from XiaoShouOA import settings
@@ -232,14 +232,16 @@ def userQianDaoQuery(request):
 
     isExcel=request.REQUEST.get('isExcel',None)
     if isExcel:
-        filename=qiandaoXls(filename,dategroup,mi)
-        if filename:
-            return HttpResponseRedirect(settings.STATIC_URL+'upload/%s'%urllib.quote(filename.encode('utf-8')))
+        response=HttpResponse(mimetype=u'application/ms-excel')
+        qiandaoXls(filename,dategroup,mi,response)
+        return response
+            # return HttpResponseRedirect(settings.STATIC_URL+'upload/%s'%urllib.quote(filename.encode('utf-8')))
     return render_to_response('oa/userqiandaoListPage.html', RequestContext(request, {'query': dategroup,'qiandao':qiandao,'mi':mi}))
 
-def qiandaoXls(filename,dategroup,mi):
+def qiandaoXls(filename,dategroup,mi,response):
     import uuid
     filename+='.xls'
+    response['Content-Disposition'] = (u'attachment;filename=%s'%filename).encode('utf-8')
     import os
     if os.path.exists(os.path.join(settings.STATIC_ROOT,filename)):
         os.remove(os.path.join(settings.STATIC_ROOT,filename))
@@ -322,8 +324,8 @@ def qiandaoXls(filename,dategroup,mi):
             usernum+=1
 
     ws.col(4).width=0x0d00 + 7000
-    wb.save(settings.STATIC_ROOT+'/upload/'+filename)
-    return filename
+    wb.save(response)
+    # return filename
 
 
 # @client_login_required

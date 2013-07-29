@@ -1,4 +1,5 @@
 # coding=utf-8
+import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -6,13 +7,14 @@ from django.db import models
 # Create your models here.
 from xiaoshou_oa.tools import distance
 
+CHOICE=((True,u'删除状态'),(False,u'使用状态'))
 
 class Depatement(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'职位后缀名称', help_text=u'部门的名称')
     manager = models.OneToOneField(User, blank=True,null=True, related_name=u'department_manager', verbose_name=u'管理者', help_text=u'部门管理者')
     fatherDepart = models.ForeignKey('Depatement', blank=True, null=True, related_name=u'department_father',
                                      verbose_name=u'父级部门', help_text=u'部门隶属关系')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
     def fullname(self):
         if self.manager:
@@ -29,13 +31,16 @@ class Person(models.Model):
     tel = models.CharField(max_length=15, verbose_name=u'电话')
     deviceid=models.CharField(max_length=100,unique=True,blank=True,null=True,verbose_name=u'手机唯一编码',help_text=u'手机的指纹')
 
+    def __unicode__(self):
+        return u'%s_%s_%s'%(getattr(self.depate,'__unicode__',u'无隶属'),self.user.username,self.user.get_full_name())
+
 
 class Office(models.Model):
     name = models.CharField(unique=True, max_length=30, verbose_name=u'厅台名称', help_text=u'厅台的名称')
     flag = models.CharField(unique=True, max_length=30, verbose_name=u'厅台字母缩写', help_text=u'厅台字母缩写，唯一')
     gps = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'gps信息', help_text=u'厅台的gps信息')
     address = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
     def __unicode__(self):
         return self.name
 
@@ -46,7 +51,7 @@ class QianDao(models.Model):
     needTime = models.BooleanField(default=True, verbose_name=u'每天唯一', help_text=u'是否每天唯一，按照最后一次签到信息')
     needGPS = models.BooleanField(default=True, verbose_name=u'需要GPS', help_text=u'是否GPS信息')
     needAddress = models.BooleanField(default=True, verbose_name=u'需要街道地址', help_text=u'是否需要街道信息')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
     def hour(self):
         if self.standardtime:
@@ -70,7 +75,7 @@ class UserQianDao(models.Model):
     gps = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'gps信息', help_text=u'手机端获取的gps信息')
     office = models.ForeignKey(Office, blank=True, null=True, verbose_name=u'签到厅台', help_text=u'签到的位置')
     address = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
     def officeDistance(self):
         return distance(self.gps,self.office.gps)
@@ -104,25 +109,27 @@ class UserQianDao(models.Model):
 
 class DocumentKind(models.Model):
     name = models.CharField(max_length=30, unique=True, verbose_name=u'文档分类', help_text=u'文档的分类')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
 
     class Meta():
         verbose_name=u'文档分类'
+        verbose_name_plural=u'文档分类列表'
     def __unicode__(self):
         return self.name
 
 class Document(models.Model):
     title = models.CharField(max_length=100, verbose_name=u'文档标题', help_text=u'文档的标题')
     kind = models.ForeignKey(DocumentKind, verbose_name=u'文档分类')
-    dateTime = models.DateTimeField(auto_created=True, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
-    author = models.ForeignKey(User, verbose_name=u'作者', help_text=u'创建文档的人')
+    dateTime = models.DateTimeField(default=datetime.datetime.now,auto_created=True, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
+    author = models.ForeignKey(User,default='request.user', verbose_name=u'作者', help_text=u'创建文档的人')
     show = models.IntegerField(default=1, verbose_name=u'浏览次数', help_text=u'浏览文档的次数')
     content = models.TextField(blank=True, null=True, verbose_name=u'文档内容', help_text=u'文档内容的段')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
     class Meta():
         verbose_name=u'文档'
+        verbose_name_plural=u'文档列表'
 
     def __unicode__(self):
         return self.title
@@ -130,13 +137,19 @@ class Document(models.Model):
 class DocumentImage(models.Model):
     img = models.ImageField(blank=True, null=True, upload_to='media/upload/images', verbose_name=u'图片')
     document = models.ForeignKey(Document, verbose_name=u'隶属文档')
-    index = models.IntegerField(verbose_name=u'排序')
+    index = models.IntegerField(choices=CHOICE,default=1,verbose_name=u'排序')
+    class Meta():
+        verbose_name=u'文档图片'
+        verbose_name_plural=u'文档图片列表'
 
 class Topic(models.Model):
     title = models.CharField(max_length=200, verbose_name=u'题目', help_text=u'选择题的题目')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
     def __unicode__(self):
         return self.title
+    class Meta():
+        verbose_name=u'选择题'
+        verbose_name_plural=u'选择题列表'
 
 class Choice(models.Model):
     content = models.CharField(max_length=100, verbose_name=u'选项', help_text=u'选择题的选项')
@@ -145,16 +158,22 @@ class Choice(models.Model):
     topic = models.ForeignKey(Topic, verbose_name=u'题目', help_text=u'隶属题目')
     def __unicode__(self):
         return self.content
+    class Meta():
+        verbose_name=u'选项'
+        verbose_name_plural=u'选项列表'
 
 class Examination(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'考试名称', help_text=u'给考试起个名字，方便查询')
-    dateTime = models.DateTimeField(auto_created=True, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
-    joins = models.ManyToManyField(User, verbose_name=u'参与考试的用户', help_text=u'参与考试的员工')
+    dateTime = models.DateTimeField(auto_created=True,default=datetime.datetime.now, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
+    joins = models.ManyToManyField(Person, verbose_name=u'参与考试的用户', help_text=u'参与考试的员工')
     topics = models.ManyToManyField(Topic, verbose_name=u'试卷的考题', help_text=u'组成试卷的考题')
-    time = models.IntegerField(verbose_name=u'考试时间', help_text=u'单位为分钟')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    time = models.IntegerField(default=20,verbose_name=u'考试时间', help_text=u'单位为分钟')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
     def __unicode__(self):
         return self.name
+    class Meta():
+        verbose_name=u'试卷'
+        verbose_name_plural=u'试卷列表'
 
 class Score(models.Model):
     user = models.ForeignKey(User, verbose_name=u'用户')
@@ -166,7 +185,7 @@ class Score(models.Model):
 class ProductType(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'类型', help_text=u'合约、裸机……')
     flag = models.CharField(max_length=50,unique=True, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
     class Admin():
         pass
@@ -179,7 +198,7 @@ class ProductType(models.Model):
 class ProductBrands(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'品牌', help_text=u'')
     flag = models.CharField(max_length=50,unique=True, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
 
     class Admin():
         pass
@@ -193,7 +212,7 @@ class ProductBrands(models.Model):
 class Gift(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'礼物名称', help_text=u'礼物的名称')
     flag = models.CharField(max_length=50,unique=True, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
-    isdel = models.BooleanField(default=False, verbose_name=u'是否删除', help_text=u'不再使用')
+    isdel = models.BooleanField(choices=CHOICE,default=False, verbose_name=u'是否删除', help_text=u'不再使用')
     class Admin():
         pass
     class Meta():

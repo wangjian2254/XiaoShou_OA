@@ -6,6 +6,7 @@ __author__ = '王健'
 from django import template
 register=template.Library()
 
+
 @register.filter(name='erweima')
 def erweima(adminform,object_name):
     flag=True

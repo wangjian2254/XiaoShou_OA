@@ -69,9 +69,27 @@
 {% prepopulated_fields_js %}
 </div>
 </form></div>
+{% ifequal opts.object_name 'ProductModel' %}
 <div class="submit-row">
 <p class="deletelink-box">二维码在线生成器</p>
 
 </div>
    {{ adminform|erweima:opts.object_name|safe}}
+    {% endifequal %}
+
+{% ifequal opts.object_name 'ProductType' %}
+<div class="submit-row">
+<p class="deletelink-box">二维码在线生成器</p>
+
+</div>
+   {{ adminform|erweima:opts.object_name|safe}}
+    {% endifequal %}
+
+{% ifequal opts.object_name 'Gift' %}
+<div class="submit-row">
+<p class="deletelink-box">二维码在线生成器</p>
+
+</div>
+   {{ adminform|erweima:opts.object_name|safe}}
+    {% endifequal %}
 {% endblock %}
