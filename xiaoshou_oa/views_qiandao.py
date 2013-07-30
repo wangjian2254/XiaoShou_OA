@@ -174,7 +174,7 @@ def queryRecord(users,qiandao,startdate,enddate,dategroup):
                     oo=datadict['%s-%s-%s'%(date,u.id,qd.id)]
                     l=[]
                     for o in oo:
-                        q={'officename':getattr(getattr(o,'office',''),'name',''),'officegps':getattr(getattr(o,'office',''),'gps',''),'address':getattr(o,'address',''),'dateTime':o.dateTime.strftime('%H:%M'),'gpsdistance':o.officeDistance(),'time':o.timeDistance()}
+                        q={'qiandaoname':o.qiandao.name,'officename':getattr(getattr(o,'office',''),'name',''),'officegps':getattr(getattr(o,'office',''),'gps',''),'address':getattr(o,'address',''),'dateTime':o.dateTime.strftime('%H:%M'),'gpsdistance':o.officeDistance(),'time':o.timeDistance()}
                         l.append(q)
                     userrow['qiandaolist'].append(l)
                 else:
@@ -346,8 +346,9 @@ def userQianDaoQueryClient(request):
     手机查询 签到信息
     '''
     qiandaoid = request.REQUEST.getlist('qiandaoid')
+    mi = request.REQUEST.get('mi',800)
     try:
-        qiandaoid.remove('')
+        mi=int(mi)
     except:
         pass
     startdate = request.REQUEST.get('startdate','2013-07-01')
@@ -381,7 +382,28 @@ def userQianDaoQueryClient(request):
         qiandao=QianDao.objects.all()
     dategroup=[]
     queryRecord(users,qiandao,startdate,enddate,dategroup)
-    return getResult(True,u'获取数据成功',dategroup)
+    resultList=[]
+    for data in dategroup:
+        resultList.append({'date':u'日期：%s'%data['date']})
+        for query in data['query']:
+            for i,rows in enumerate(query['qiandaolist']):
+                for j,row in enumerate(rows):
+
+                    mapdata={'qiandaoname':row['qiandaoname'],'get_full_name':query['user']['get_full_name'],'officename':row['officename'],'dateTime':row['dateTime']}
+                    if row['officegps']:
+                        if row['gpsdistance']<mi:
+                            mapdata['gps']=u'合格'
+                        else:
+                            mapdata['gps']=u'不合格'
+                    else:
+                        mapdata['gps']=u'0'
+                    if row['time']:
+                        mapdata['time']=u'合格'
+                    else:
+                        mapdata['time']=u'不合格'
+                    resultList.append(mapdata)
+
+    return getResult(True,u'获取数据成功',resultList)
 
 
 @client_login_required

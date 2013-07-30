@@ -142,9 +142,9 @@ function giftallsubmintForm(){
             <td style="padding-left:5px;"  width="100px" >配送礼物:</td>
 
             <td>
-                <input type="checkbox"    id="giftall" onclick="giftallsubmintForm()" checked="checked" /><label>全部</label>
+                <input type="checkbox"    id="giftall" onclick="giftallsubmintForm()" /><label>全部</label>
               {% for d in giftlist %}
-                     <input type="checkbox" name="giftid"   value="{{ d.id }}" onclick="submintForm()"  checked="checked" /><label>{{ d.name }}</label>
+                     <input type="checkbox" name="giftid"   value="{{ d.id }}" onclick="submintForm()"   /><label>{{ d.name }}</label>
                      {% if d.isdel %}<span style="color:red;">&nbsp;&nbsp;已删除</span>{% endif %}
               {% endfor %}
                </td>
