@@ -81,10 +81,12 @@ def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, gi
                             continue
                         porder = {}
                         porder['username'] = orderdict[k]['order'].user.username
-                        porder['managername'] = getattr(getattr(getattr(orderdict[k]['order'].user.person,'depate',''),'manager',''),'get_full_name','')
+                        porder['managername'] = getattr(
+                            getattr(getattr(orderdict[k]['order'].user.person, 'depate', ''), 'manager', ''),
+                            'get_full_name', '')
                         porder['get_full_name'] = orderdict[k]['order'].user.get_full_name()
                         porder['ordernum'] = orderdict[k]['num']
-                        porder['ordertypename']=orderdict[k]['order'].type.name
+                        porder['ordertypename'] = orderdict[k]['order'].type.name
                         porder['productname'] = orderdict[k]['order'].product.name
                         porder['productbrandsname'] = orderdict[k]['order'].product.brands.name
                         row['query'].append(porder)
@@ -113,18 +115,18 @@ def userProductOrderQuery(request):
     # productid = request.REQUEST.getlist('productid')
     startdate = request.REQUEST.get('startdate')
     enddate = request.REQUEST.get('enddate')
-    filename=''
+    filename = ''
     if not startdate or not enddate:
         startdate = datetime.datetime.now().strftime('%Y-%m-%d')
         enddate = datetime.datetime.now().strftime('%Y-%m-%d')
         # startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     # enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
-    filename+=u'%s_%s'%(startdate,enddate)
+    filename += u'%s_%s' % (startdate, enddate)
     if depatementid:
         d = []
         depatement = Depatement.objects.get(pk=depatementid)
         d.append(depatement)
-        filename+='_%s'%depatement.name
+        filename += '_%s' % depatement.name
         for i in range(5):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)
@@ -136,7 +138,7 @@ def userProductOrderQuery(request):
 
     else:
         users = User.objects.filter(is_superuser=False)
-        filename+=u'_所有人'
+        filename += u'_所有人'
         # if productid:
     #     product = Product.objects.filter(pk__in=productid)
     # el
@@ -154,67 +156,69 @@ def userProductOrderQuery(request):
     queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, giftid)
 
     if request.REQUEST.get('isExcel'):
-        response=HttpResponse(mimetype=u'application/ms-excel')
+        response = HttpResponse(mimetype=u'application/ms-excel')
 
-        queryExcel(filename,dategroup,response)
+        queryExcel(filename, dategroup, response)
         return response
     return render_to_response('oa/userxiaoshouListPage.html', RequestContext(request, {'query': dategroup}))
 
 
-def queryExcel(filename,dategroup,response):
-    filename+=u'.xls'
-    response['Content-Disposition'] = (u'attachment;filename=%s'%filename).encode('utf-8')
+def queryExcel(filename, dategroup, response):
+    filename += u'.xls'
+    response['Content-Disposition'] = (u'attachment;filename=%s' % filename).encode('utf-8')
     import xlwt
-    from xlwt import Font,Alignment
-    style1=xlwt.XFStyle()
-    font1=Font()
-    font1.height=360
-    font1.name=u'仿宋'
-    style1.font=font1
-    algn=Alignment()
-    algn.horz=Alignment.HORZ_LEFT
-    style1.alignment=algn
-    style1.font=font1
-    style0=xlwt.XFStyle()
-    algn0=Alignment()
-    algn0.horz=Alignment.HORZ_CENTER
-    font=Font()
-    font.height=320
-    font.bold=False
-    font.name=u'仿宋'
-    style0.alignment=algn0
-    style0.font=font
-    wb=xlwt.Workbook()
-    ws=wb.add_sheet(u"销售报表",cell_overwrite_ok=True)
-    rownum=0
-    ws.write_merge(rownum,rownum,0,0,u'序号',style0)
-    ws.write_merge(rownum,rownum,1,1,u'品牌',style0)
-    ws.write_merge(rownum,rownum,2,2,u'型号',style0)
-    ws.write_merge(rownum,rownum,3,3,u'类型',style0)
-    ws.write_merge(rownum,rownum,4,4,u'数量',style0)
-    ws.write_merge(rownum,rownum,5,5,u'账户',style0)
-    ws.write_merge(rownum,rownum,6,6,u'姓名',style0)
-    ws.write_merge(rownum,rownum,7,7,u'主管',style0)
-    rownum+=1
-    datanum=1
+    from xlwt import Font, Alignment
+
+    style1 = xlwt.XFStyle()
+    font1 = Font()
+    font1.height = 360
+    font1.name = u'仿宋'
+    style1.font = font1
+    algn = Alignment()
+    algn.horz = Alignment.HORZ_LEFT
+    style1.alignment = algn
+    style1.font = font1
+    style0 = xlwt.XFStyle()
+    algn0 = Alignment()
+    algn0.horz = Alignment.HORZ_CENTER
+    font = Font()
+    font.height = 320
+    font.bold = False
+    font.name = u'仿宋'
+    style0.alignment = algn0
+    style0.font = font
+    wb = xlwt.Workbook()
+    ws = wb.add_sheet(u"销售报表", cell_overwrite_ok=True)
+    rownum = 0
+    ws.write_merge(rownum, rownum, 0, 0, u'序号', style0)
+    ws.write_merge(rownum, rownum, 1, 1, u'品牌', style0)
+    ws.write_merge(rownum, rownum, 2, 2, u'型号', style0)
+    ws.write_merge(rownum, rownum, 3, 3, u'类型', style0)
+    ws.write_merge(rownum, rownum, 4, 4, u'数量', style0)
+    ws.write_merge(rownum, rownum, 5, 5, u'账户', style0)
+    ws.write_merge(rownum, rownum, 6, 6, u'姓名', style0)
+    ws.write_merge(rownum, rownum, 7, 7, u'主管', style0)
+    rownum += 1
+    datanum = 1
     for data in dategroup:
-        ws.write_merge(rownum,rownum,0,7,u'日期：%s   厅台：%s'%(data['date'],data['officename']),style1)
-        rownum+=1
+        ws.write_merge(rownum, rownum, 0, 7, u'日期：%s   厅台：%s' % (data['date'], data['officename']), style1)
+        rownum += 1
         for i, row in enumerate(data['query']):
-            ws.write_merge(rownum,rownum,0,0,datanum,style0)
-            ws.write_merge(rownum,rownum,1,1,row['productbrandsname'],style0)
-            ws.write_merge(rownum,rownum,2,2,row['productname'],style0)
-            ws.write_merge(rownum,rownum,3,3,row['ordertypename'],style0)
-            ws.write_merge(rownum,rownum,4,4,row['ordernum'],style0)
-            ws.write_merge(rownum,rownum,5,5,row['username'],style0)
-            ws.write_merge(rownum,rownum,6,6,row['get_full_name'],style0)
-            ws.write_merge(rownum,rownum,7,7,row['managername'],style0)
-            datanum+=1
-            rownum+=1
+            ws.write_merge(rownum, rownum, 0, 0, datanum, style0)
+            ws.write_merge(rownum, rownum, 1, 1, row['productbrandsname'], style0)
+            ws.write_merge(rownum, rownum, 2, 2, row['productname'], style0)
+            ws.write_merge(rownum, rownum, 3, 3, row['ordertypename'], style0)
+            ws.write_merge(rownum, rownum, 4, 4, row['ordernum'], style0)
+            ws.write_merge(rownum, rownum, 5, 5, row['username'], style0)
+            ws.write_merge(rownum, rownum, 6, 6, row['get_full_name'], style0)
+            ws.write_merge(rownum, rownum, 7, 7, row['managername'], style0)
+            datanum += 1
+            rownum += 1
     for i in range(8):
-        ws.col(i).width=256*20
+        ws.col(i).width = 256 * 20
     wb.save(response)
     # wb.save(settings.STATIC_ROOT+'/upload/'+filename)
+
 
 @client_login_required
 def userXiaoShouOrderUpdate(request):
@@ -241,11 +245,11 @@ def userXiaoShouOrderUpdate(request):
         order.serverDate = datetime.datetime.now().strftime('%Y-%m-%d')
         order.clientDate = clientDate
         order.clientTime = clientTime
-        msg=u'数据提交成功'
+        msg = u'数据提交成功'
 
     else:
         order = ProductOrder.objects.get(pk=id)
-        msg=u'数据修改成功'
+        msg = u'数据修改成功'
 
     order.product = ProductModel.objects.get(flag=productid)
     order.type = ProductType.objects.get(flag=producttype)
@@ -262,39 +266,55 @@ def userXiaoShouOrderUpdate(request):
     return getResult(True, u'数据提交成功.', order.id)
 
 
-#
-# @client_login_required
-# def userProductOrderClient(request):
-#     '''
-#     手机查询 签到信息
-#     '''
-#     qiandaoid = request.REQUEST.get('qiandaoid','').split(',')
-#     qiandaoid.remove('')
-#     startdate = request.REQUEST.get('startdate')
-#     enddate = request.REQUEST.get('enddate')
-#     if not startdate or not enddate:
-#         raise Http404
-#     startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
-#     enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
-#     user=request.user
-#     users=[user]
-#     d=[]
-#     for i in range(5):
-#         u=getUserByDepartment(users,d)
-#         users.extend(u)
-#
-#     if qiandaoid:
-#         qiandao = QianDao.objects.filter(pk__in=qiandaoid)
-#     else:
-#         qiandao=[]
-#     dategroup=[]
-#     queryRecord(users,qiandao,startdate,enddate,dategroup)
-#     querylist=[]
-#     for datedict in dategroup:
-#         querylist.append({'date':datedict['date'], 'query':[]})
-#         for uqd in datedict['query']:
-#             querylist[-1]['query'].append({'id':uqd.pk, 'userid':uqd.user.pk ,'username':uqd.user.username, 'truename':uqd.user.get_full_name, 'dateTime':uqd.dateTime.strftime('%H:%M'), 'gps':uqd.gps, 'address':uqd.address, 'officeid':uqd.office.pk, 'office':uqd.office.name})
-#     return getResult(True,u'获取数据成功',querylist)
+@client_login_required
+def userProductOrderClient(request):
+    '''
+    手机查询 销售统计信息
+    '''
+    productTypeid = request.REQUEST.getlist('productTypeid')
+    productBrandsid = request.REQUEST.getlist('productBrandsid')
+    productModelid = request.REQUEST.getlist('productModelid')
+    startdate = request.REQUEST.get('startdate')
+    enddate = request.REQUEST.get('enddate')
+    if not startdate or not enddate:
+        startdate = datetime.datetime.now().strftime('%Y-%m-%d')
+        enddate = datetime.datetime.now().strftime('%Y-%m-%d')
+        # startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
+    # enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
+    user = request.user
+    if user.person.depate:
+        d = []
+        depatement = user.person.depate
+        d.append(depatement)
+        for i in range(5):
+            for depat in getDepartmentByDepartment(d):
+                d.append(depat)
+
+        users = []
+        for u in Person.objects.filter(depate__in=d):
+            users.append(u.user)
+    else:
+        users = [user]
+    if productModelid:
+        productmodels = ProductModel.objects.filter(pk__in=productModelid)
+        # product=Product.objects.filter(brands__in=productmodels)
+    elif productBrandsid:
+        productbrand = ProductBrands.objects.filter(pk__in=productBrandsid)
+        productmodels = ProductModel.objects.filter(brands__in=productbrand)
+        # product=Product.objects.filter(brands__in=productmodels)
+    else:
+        productmodels = []
+
+    dategroup = []
+    queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, None)
+    resultList=[]
+    for data in dategroup:
+        resultList.append({'date':u'日期：%s   厅台：%s' % (data['date'], data['officename'])})
+        for i, row in enumerate(data['query']):
+            mapdata={'productbrandsname':row['productbrandsname'],'productname':row['productname'],'ordertypename':row['ordertypename'],'ordernum':row['ordernum'],'get_full_name':row['get_full_name'],'managername':row['managername']}
+            resultList.append(mapdata)
+    return getResult(True, u'获取数据成功', resultList)
+
 #
 #
 # @client_login_required

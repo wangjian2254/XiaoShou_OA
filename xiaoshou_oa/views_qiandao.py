@@ -340,7 +340,7 @@ def qiandaoXls(filename,qiandao,dategroup,mi,response):
     # return filename
 
 
-# @client_login_required
+@client_login_required
 def userQianDaoQueryClient(request):
     '''
     手机查询 签到信息
