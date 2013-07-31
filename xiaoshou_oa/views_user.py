@@ -156,7 +156,7 @@ def userDeviceid(request):
         try:
             user = User.objects.get(pk=id)
             user.person.deviceid=None
-            user.save()
+            user.person.save()
             return getResult(True, u'注销用户设备指纹成功，用户可以使用新的设备。')
         except:
             return getResult(False, u'用户不存在')

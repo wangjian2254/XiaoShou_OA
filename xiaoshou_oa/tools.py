@@ -12,7 +12,7 @@ __author__ = u'王健'
 
 def permission_required(func=None):
     def test(request, *args, **kwargs):
-        if request.user.is_superuser:
+        if  request.user.is_superuser:
             return func(request, *args, **kwargs)
         else:
             return getResult(False,u'需要管理员权限')
@@ -29,7 +29,7 @@ def client_login_required(func=None):
                     request.user.person.deviceid=deviceid
                     request.user.person.save()
                 elif serverdeviceid and deviceid and deviceid!=serverdeviceid:
-                    return getResult(False,u'用户使用的设备与注册设备不一致，请使用注册的设备。', None,404)
+                    return getResult(False,u'用户使用的设备与注册设备不一致，请使用注册的设备。%s_%s'%(deviceid,serverdeviceid), None,404)
 
                 return func(request, *args, **kwargs)
             else:

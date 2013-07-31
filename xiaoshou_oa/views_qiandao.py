@@ -346,7 +346,7 @@ def userQianDaoQueryClient(request):
     手机查询 签到信息
     '''
     qiandaoid = request.REQUEST.getlist('qiandaoid')
-    mi = request.REQUEST.get('mi',800)
+    mi = request.REQUEST.get('mi',500)
     try:
         mi=int(mi)
     except:
@@ -361,9 +361,9 @@ def userQianDaoQueryClient(request):
     user=request.user
 
 
-    if user.person.depate:
+    if hasattr(user,'department_manager'):
         d=[]
-        depatement=user.person.depate
+        depatement=user.department_manager
         d.append(depatement)
 
         for i in range(5):
@@ -396,7 +396,7 @@ def userQianDaoQueryClient(request):
                         else:
                             mapdata['gps']=u'不合格'
                     else:
-                        mapdata['gps']=u'0'
+                        mapdata['gps']=u'缺少数据'
                     if row['time']:
                         mapdata['time']=u'合格'
                     else:

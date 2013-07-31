@@ -32,7 +32,9 @@ class Person(models.Model):
     deviceid=models.CharField(max_length=100,unique=True,blank=True,null=True,verbose_name=u'手机唯一编码',help_text=u'手机的指纹')
 
     def __unicode__(self):
-        return u'%s_%s_%s'%(getattr(self.depate,'__unicode__',u'无隶属'),self.user.username,self.user.get_full_name())
+        if self.depate:
+            return u'%s_%s_%s'%(self.depate,self.user.username,self.user.get_full_name())
+        return u'%s_%s_%s'%(u'无隶属',self.user.username,self.user.get_full_name())
 
 
 class Office(models.Model):

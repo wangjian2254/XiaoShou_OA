@@ -120,6 +120,8 @@
                 {% else %}
                     {{ u.person.depate.manager.get_full_name }}:{{ u.person.depate.name }}
                 {% endifequal %}
+            {% else %}
+                    {{ u.person.depate.manager.get_full_name }}:{{ u.person.depate.name }}
             {% endif %}
         {% else %}
             {{ u.person.depate.name }}
