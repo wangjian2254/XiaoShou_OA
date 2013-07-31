@@ -81,9 +81,10 @@ def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, gi
                             continue
                         porder = {}
                         porder['username'] = orderdict[k]['order'].user.username
-                        porder['managername'] = getattr(
-                            getattr(getattr(orderdict[k]['order'].user.person, 'depate', ''), 'manager', ''),
-                            'get_full_name', '')
+                        if hasattr(getattr(getattr(orderdict[k]['order'].user.person, 'depate', ''), 'manager', ''),'get_full_name'):
+                            porder['managername'] = getattr(getattr(orderdict[k]['order'].user.person, 'depate', ''), 'manager', '').get_full_name()
+                        else:
+                            porder['managername'] =u'';
                         porder['get_full_name'] = orderdict[k]['order'].user.get_full_name()
                         porder['ordernum'] = orderdict[k]['num']
                         porder['ordertypename'] = orderdict[k]['order'].type.name
@@ -282,9 +283,9 @@ def userProductOrderClient(request):
         # startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     # enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
     user = request.user
-    if user.person.depate:
+    if hasattr(user,'department_manager'):
         d = []
-        depatement = user.person.depate
+        depatement = user.department_manager
         d.append(depatement)
         for i in range(5):
             for depat in getDepartmentByDepartment(d):
@@ -303,7 +304,7 @@ def userProductOrderClient(request):
         productmodels = ProductModel.objects.filter(brands__in=productbrand)
         # product=Product.objects.filter(brands__in=productmodels)
     else:
-        productmodels = []
+        productmodels = ProductModel.objects.all()
 
     dategroup = []
     queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, None)
