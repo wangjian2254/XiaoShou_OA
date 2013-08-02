@@ -157,6 +157,7 @@ def queryRecord(users,qiandao,startdate,enddate,dategroup):
         if not datadict.has_key('%s-%s-%s'%(date,uqd.user_id,uqd.qiandao_id)):
             datadict['%s-%s-%s'%(date,uqd.user_id,uqd.qiandao_id)]=[]
         datadict['%s-%s-%s'%(date,uqd.user_id,uqd.qiandao_id)].append(uqd)
+    datelist.sort(reverse=True)
     for date in datelist:
         row={}
         row['date']=date

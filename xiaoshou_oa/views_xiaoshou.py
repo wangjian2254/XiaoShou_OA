@@ -66,6 +66,7 @@ def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, gi
             productTypeList.append(order.type_id)
         if order.product_id not in productList:
             productList.append(order.product_id)
+    datelist.sort(reverse=True)
     for date in datelist:
 
         for officeid in officelist:
