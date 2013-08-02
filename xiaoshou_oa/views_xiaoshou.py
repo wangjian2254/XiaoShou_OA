@@ -239,7 +239,8 @@ def userXiaoShouOrderUpdate(request):
 
     if not productid or not producttype or not productoffice or not imie or not orderNumber or not clientDate or not clientTime:
         return getResult(False, u'数据不足，请录入必要数据')
-
+    if 0<ProductOrder.objects.filter(imie=imie).count():
+        return getResult(False, u'设备IMIE重复，请扫描正确的条形码。')
     if not id:
         order = ProductOrder()
         order.user = request.user
