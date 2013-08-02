@@ -91,7 +91,7 @@
 
 {% for qmap in query %}
     <tr  bgcolor="#ffffff" >
-            <td align="left" style="padding-left: 20px;text-align: left;"  colspan="8">日期：{{ qmap.date }}&nbsp;&nbsp;&nbsp;&nbsp;厅台：{{ qmap.officename }}</td>
+            <td align="left" style="padding-left: 20px;text-align: left;"  colspan="8">日期：{{ qmap.date }}&nbsp;&nbsp;&nbsp;&nbsp;厅台：{{ qmap.officename }}&nbsp;&nbsp;&nbsp;&nbsp;总计：{{ qmap.totalnum }}</td>
             </tr>
     {% for u in qmap.query %}
 <tr >

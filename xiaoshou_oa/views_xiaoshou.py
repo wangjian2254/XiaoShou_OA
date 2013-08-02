@@ -73,6 +73,7 @@ def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, gi
             row['date'] = date
             row['officename'] = Office.objects.get(pk=officeid).name
             row['query'] = []
+            phonenum=0
             for userid in userlist:
                 for typeid in productTypeList:
                     for productid in productList:
@@ -91,6 +92,8 @@ def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, gi
                         porder['productname'] = orderdict[k]['order'].product.name
                         porder['productbrandsname'] = orderdict[k]['order'].product.brands.name
                         row['query'].append(porder)
+                        phonenum+=orderdict[k]['num']
+            row['totalnum']=phonenum
             dategroup.append(row)
 
 
@@ -202,7 +205,7 @@ def queryExcel(filename, dategroup, response):
     rownum += 1
     datanum = 1
     for data in dategroup:
-        ws.write_merge(rownum, rownum, 0, 7, u'日期：%s   厅台：%s' % (data['date'], data['officename']), style1)
+        ws.write_merge(rownum, rownum, 0, 7, u'日期：%s   厅台：%s   总计：%s 台' % (data['date'], data['officename'],data['totalnum']), style1)
         rownum += 1
         for i, row in enumerate(data['query']):
             ws.write_merge(rownum, rownum, 0, 0, datanum, style0)
@@ -311,7 +314,7 @@ def userProductOrderClient(request):
     queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, None)
     resultList=[]
     for data in dategroup:
-        resultList.append({'date':u'日期：%s   厅台：%s' % (data['date'], data['officename'])})
+        resultList.append({'date':u'日期：%s   厅台：%s   总计：%s 台' % (data['date'], data['officename'],data['totalnum'])})
         for i, row in enumerate(data['query']):
             mapdata={'productbrandsname':row['productbrandsname'],'productname':row['productname'],'ordertypename':row['ordertypename'],'ordernum':row['ordernum'],'get_full_name':row['get_full_name'],'managername':row['managername']}
             resultList.append(mapdata)

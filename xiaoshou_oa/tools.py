@@ -6,7 +6,7 @@ import json
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
 import math
-from xiaoshou_oa.models import Person
+
 
 __author__ = u'王健'
 
@@ -27,6 +27,7 @@ def client_login_required(func=None):
                 deviceid=request.REQUEST.get('deviceid',None)
                 serverdeviceid=request.user.person.deviceid
                 if not serverdeviceid and deviceid:
+                    from xiaoshou_oa.models import Person
                     if 0==Person.objects.filter(deviceid=deviceid).count():
                         request.user.person.deviceid=deviceid
                         request.user.person.save()
