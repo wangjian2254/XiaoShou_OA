@@ -7,9 +7,11 @@ Created on 2011-3-19
 from django.conf.urls import patterns
 from xiaoshou_oa.views import top, menu, welcome
 from xiaoshou_oa.views_depatement import depatementAdd, depatementList, depatementSave, depatementDelete, depatementOpen, depatementPeople, depatementPeopleDel, depatementPeopleAdd
+from xiaoshou_oa.views_kaoshi import getMyKaoShi, getExamination, getScore
 from xiaoshou_oa.views_office import officeAdd, officeSave, check_office, officeList, officeDelete, officeOpen, calculateOffice, officeListClient, setGPSoffice
 from xiaoshou_oa.views_qiandao import qiandaoAdd, qiandaoSave, qiandaoDelete, qiandaoOpen, qiandaoList, check_qiandao, userQianDaoList, userQianDaoQuery, userqiandaoUploadClient, userQianDaoQueryClient, qiandaoListClient
 from xiaoshou_oa.views_user import userSave, userAdd, userList, userListPage, check_username, userDelete, userOpen, userPassword, clientLogin, userDeviceid
+from xiaoshou_oa.views_wendang import getAllMenu, getDocument, getDocumentContent, searchDocument
 from xiaoshou_oa.views_xiaoshou import userProductOrderQuery, userXiaoShouList, userXiaoShouOrderUpdate, userProductOrderClient
 
 
@@ -70,5 +72,15 @@ urlpatterns = patterns('^oa/$',
                         (r'^qiandaoListClient/$',qiandaoListClient),
                         (r'^officeListClient/$',officeListClient),
                         (r'^userXiaoShouOrderUpdate/$',userXiaoShouOrderUpdate),
+
+                        # 文档接口
+                        (r'^getAllMenu/$',getAllMenu),
+                        (r'^getDocument/$',getDocument),
+                        (r'^getDocumentContent/$',getDocumentContent),
+                        (r'^searchDocument/$',searchDocument),
+                        # 考试接口
+                        (r'^getMyKaoShi/$',getMyKaoShi),
+                        (r'^getExamination/$',getExamination),
+                        (r'^getScore/$',getScore),
 
                        )
