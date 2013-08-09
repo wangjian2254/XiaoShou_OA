@@ -137,9 +137,9 @@ class Document(models.Model):
         return self.title
 
 class DocumentImage(models.Model):
-    img = models.ImageField(blank=True, null=True, upload_to='media/upload/images', verbose_name=u'图片')
+    img = models.ImageField( upload_to='media/upload/images', verbose_name=u'图片')
     document = models.ForeignKey(Document, verbose_name=u'隶属文档')
-    index = models.IntegerField(choices=CHOICE,default=1,verbose_name=u'排序')
+    index = models.IntegerField(default=1,verbose_name=u'排序')
     class Meta():
         verbose_name=u'文档图片'
         verbose_name_plural=u'文档图片列表'
