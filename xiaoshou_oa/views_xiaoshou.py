@@ -131,7 +131,7 @@ def userProductOrderQuery(request):
         d = []
         depatement = Depatement.objects.get(pk=depatementid)
         d.append(depatement)
-        filename += '_%s' % depatement.name
+        filename += u'_%s' % depatement.name
         for i in range(5):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)

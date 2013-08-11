@@ -7,7 +7,7 @@ Created on 2011-3-19
 from django.conf.urls import patterns
 from xiaoshou_oa.views import top, menu, welcome
 from xiaoshou_oa.views_depatement import depatementAdd, depatementList, depatementSave, depatementDelete, depatementOpen, depatementPeople, depatementPeopleDel, depatementPeopleAdd
-from xiaoshou_oa.views_kaoshi import getMyKaoShi, getExamination, getScore
+from xiaoshou_oa.views_kaoshi import getMyKaoShi, getExamination, getScore, getScoreClient, getScoreDetailQuery, getScoreQuery, getAllKaoShi
 from xiaoshou_oa.views_office import officeAdd, officeSave, check_office, officeList, officeDelete, officeOpen, calculateOffice, officeListClient, setGPSoffice
 from xiaoshou_oa.views_qiandao import qiandaoAdd, qiandaoSave, qiandaoDelete, qiandaoOpen, qiandaoList, check_qiandao, userQianDaoList, userQianDaoQuery, userqiandaoUploadClient, userQianDaoQueryClient, qiandaoListClient
 from xiaoshou_oa.views_user import userSave, userAdd, userList, userListPage, check_username, userDelete, userOpen, userPassword, clientLogin, userDeviceid
@@ -65,6 +65,11 @@ urlpatterns = patterns('^oa/$',
 
 
 
+                        (r'^getScoreDetailQuery/$',getScoreDetailQuery),
+                        (r'^getScoreQuery/$',getScoreQuery),
+
+
+
                         # 手机端接口
                         (r'^userqiandaoUploadClient/$',userqiandaoUploadClient),
                         (r'^userQianDaoQueryClient/$',userQianDaoQueryClient),
@@ -81,6 +86,8 @@ urlpatterns = patterns('^oa/$',
                         # 考试接口
                         (r'^getMyKaoShi/$',getMyKaoShi),
                         (r'^getExamination/$',getExamination),
+                        (r'^getAllKaoShi/$',getAllKaoShi),
                         (r'^getScore/$',getScore),
+                        (r'^getScoreClient/$',getScoreClient),
 
                        )

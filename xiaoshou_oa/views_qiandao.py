@@ -211,7 +211,7 @@ def userQianDaoQuery(request):
     if depatementid:
         d=[]
         depatement=Depatement.objects.get(pk=depatementid)
-        filename+='_%s'%depatement.fullname()
+        filename+=u'_%s'%depatement.fullname()
         d.append(depatement)
 
         for i in range(5):
