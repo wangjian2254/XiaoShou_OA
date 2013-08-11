@@ -56,10 +56,10 @@ def getDocumentContent(request):
     documentid=request.REQUEST.get('documentid','')
     if documentid:
         d=Document.objects.get(pk=documentid)
-        docdict={'title':d.title,'kindName':d.kind.name,'kind':d.kind_id,'datetime':d.dateTime.strftime("%Y-%m-%d %H:%M"),'show':d.show}
+        docdict={'id':d.pk,'title':d.title,'content':d.content,'kindName':d.kind.name,'kind':d.kind_id,'datetime':d.dateTime.strftime("%Y-%m-%d %H:%M"),'show':d.show}
         docdict['imglist']=[]
         for img in DocumentImage.objects.filter(document=d).order_by('index'):
-            docdict['imglist'].append({'url':img.get_img_url(),'index':img.index,'id':img.pk})
+            docdict['imglist'].append({'url':img.img.url,'index':img.index,'id':img.pk})
         return getResult(True,u'下载数据成功',docdict)
     else:
         return getResult(True,u'文档不存在。',None)
@@ -79,7 +79,7 @@ def searchDocument(request):
     if searchText:
         query=Document.objects.filter(title__contains=searchText).order_by('-dateTime')
         for d in query[start:start+limit]:
-            dic={'title':d.title,'kindName':d.kind.name,'kind':d.kind_id,'datetime':d.dateTime.strftime("%Y-%m-%d %H:%M"),'show':d.show}
+            dic={'id':d.pk,'title':d.title,'kindName':d.kind.name,'kind':d.kind_id,'datetime':d.dateTime.strftime("%Y-%m-%d %H:%M"),'show':d.show}
             documentlist.append(dic)
         result={'length':len(documentlist),'limit':limit,'end':start+len(documentlist),'result':documentlist,'total':query.count()}
         return getResult(True,u'查找数据成功',result)

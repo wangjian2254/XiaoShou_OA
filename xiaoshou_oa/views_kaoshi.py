@@ -22,9 +22,9 @@ def getMyKaoShi(request):
     for m in Score.objects.filter(user=request.user).order_by('-id'):
         kaoshidict['%s'%m.examination_id]=m.score
     kaoshiset=kaoshidict.keys()
-    for m in Examination.objects.filter(isdel=False).filter(joins=request.user):
-        d={'name':m.name,'dateTime':m.dateTime.strftime("%Y-%m-%d %H:%M"),'time':m.time}
-        if m.pk in kaoshiset:
+    for m in Examination.objects.filter(isdel=False).filter(joins=request.user).order_by('-dateTime'):
+        d={'id':m.pk,'name':m.name,'dateTime':m.dateTime.strftime("%Y-%m-%d %H:%M"),'time':m.time}
+        if str(m.pk) in kaoshiset:
             d['score']=kaoshidict['%s'%m.pk]
             kaoshilist.append(d)
         else:
@@ -43,7 +43,7 @@ def getExamination(request):
     examin=Examination.objects.get(pk=examinationid)
     if examin.isdel:
         return getResult(False,u'考试已经被删除。')
-    examindict={'name':examin.name,'dateTime':examin.dateTime.strftime("%Y-%m-%d %H:%M"),'time':examin.time}
+    examindict={'id':examin.pk,'name':examin.name,'dateTime':examin.dateTime.strftime("%Y-%m-%d %H:%M"),'time':examin.time}
     examindict['topics']=[]
     topicsdict={}
     topicslist=[]
@@ -85,7 +85,10 @@ def getScore(request):
         s.user=request.user
         s.examination=examin
         s.score=score
-        s.save()
+        try:
+            s.save()
+        except:
+            return getResult(False,u'已经考过了，不能再考试。')
         result={'right':righttopic,'error':errortopic,'total':totaltopic,'score':score}
         return getResult(True,u'交卷成功',result)
 

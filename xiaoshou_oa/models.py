@@ -184,6 +184,9 @@ class Score(models.Model):
     def __unicode__(self):
         return u'%s-%s'%(self.user,self.score)
 
+    class Meta():
+        unique_together=[('user','examination')]
+
 class ProductType(models.Model):
     name = models.CharField(max_length=20, verbose_name=u'类型', help_text=u'合约、裸机……')
     flag = models.CharField(max_length=50,unique=True, verbose_name=u'唯一标记', help_text=u'从其他系统导入的数据的id')
