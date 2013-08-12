@@ -91,7 +91,7 @@
 
 {% for kaoshi in query %}
     <tr  bgcolor="#ffffff" >
-            <td align="left" style="padding-left: 20px;text-align: left;"  colspan="8">考试：{{ kaoshi.name }}&nbsp;&nbsp;&nbsp;人数：{{ kaoshi.totalnum }}</td>
+            <td align="left" style="padding-left: 20px;text-align: left;"  colspan="8">考试：{{ kaoshi.name }}&nbsp;&nbsp;&nbsp;参考人数：{{ kaoshi.totalnum }}&nbsp;&nbsp;&nbsp;旷考人数：{{ kaoshi.untotalnum }}</td>
             </tr>
     {% for u in kaoshi.query %}
 <tr >

@@ -111,7 +111,7 @@ def getScoreQuery(request):
 
 
 def queryRecord(users, product, dategroup):
-    query = Score.objects.filter(user__in=users).filter(examination__in=product).order_by('-examination').order_by('id')
+    query = Score.objects.filter(user__in=users).filter(examination__in=product).order_by('id')
 
     productList = []
     userlist=[]
@@ -124,23 +124,31 @@ def queryRecord(users, product, dategroup):
             orderdict[k]['managername'] = getattr(getattr(order.user.person, 'depate', ''), 'manager', '').get_full_name()
         else:
             orderdict[k]['managername'] =u'';
-        if order.examination not in productList:
-            productList.append(order.examination)
-        if order.user not in userlist:
-            userlist.append(order.user)
+        if order.user_id not in userlist:
+            userlist.append(order.user_id)
 
 
-    for examination in productList:
+    for examination in product:
         row = {}
         row['name'] = examination.name
         row['query'] = []
-        for user in userlist:
-            k = '%s-%s' % (user.pk,examination.pk)
-            if not orderdict.has_key(k):
-                continue
+        row['totalnum']=0
+        row['untotalnum']=0
+        for person in examination.joins.all():
+            if person.user_id in userlist:
+                k = '%s-%s' % (person.user.pk,examination.pk)
+                if not orderdict.has_key(k):
+                    d={'username':person.user.username,'get_full_name':person.user.get_full_name(),'score':u'未考试','kaoshiname':examination.name,'kaoshi':examination.pk}
+                    if hasattr(getattr(getattr(person, 'depate', ''), 'manager', ''),'get_full_name'):
+                        d['managername'] = getattr(getattr(person, 'depate', ''), 'manager', '').get_full_name()
+                    else:
+                        d['managername'] =u'';
+                    row['query'].append(d)
+                    row['untotalnum']+=1
+                else:
+                    row['query'].append(orderdict[k])
+                    row['totalnum']+=1
 
-            row['query'].append(orderdict[k])
-        row['totalnum']=len(row['query'])
         dategroup.append(row)
 
 def queryExcel(filename, dategroup, response):
@@ -181,7 +189,7 @@ def queryExcel(filename, dategroup, response):
     rownum += 1
     datanum = 1
     for data in dategroup:
-        ws.write_merge(rownum, rownum, 0, 4, u'考试：%s  人数：%s' % (data['name'],data['totalnum']), style1)
+        ws.write_merge(rownum, rownum, 0, 4, u'考试：%s  参考人数：%s  旷考人数：%s' % (data['name'],data['totalnum'],data['untotalnum']), style1)
         rownum += 1
         for i, row in enumerate(data['query']):
             ws.write_merge(rownum, rownum, 0, 0, datanum, style0)
@@ -228,7 +236,7 @@ def getScoreDetailQuery(request):
     #     product = Product.objects.filter(pk__in=productid)
     # el
     if kaoshiids:
-        productmodels = Examination.objects.filter(pk__in=kaoshiids)
+        productmodels = Examination.objects.filter(pk__in=kaoshiids).order_by('-id')
     else:
         productmodels = []
 
@@ -282,7 +290,7 @@ def getScoreClient(request):
     else:
         users = User.objects.filter(is_superuser=False)
     if kaoshiids:
-        productmodels = Examination.objects.filter(pk__in=kaoshiids)
+        productmodels = Examination.objects.filter(pk__in=kaoshiids).order_by('-id')
     else:
         productmodels = []
 
