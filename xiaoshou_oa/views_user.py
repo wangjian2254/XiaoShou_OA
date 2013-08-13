@@ -80,6 +80,9 @@ def userSave(request):
             pass
     if depate:
         person.depate = depate
+    else:
+        person.depate = None
+
     person.save()
     if id:
         message = u'修改成功'

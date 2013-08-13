@@ -55,6 +55,9 @@ def depatementSave(request):
         depatefather=Depatement.objects.get(pk=depatementfatherid)
         depate.fatherDepart=depatefather
         depate.save()
+    else:
+        depate.fatherDepart=None
+        depate.save()
     if userid:
         user=User.objects.get(pk=userid)
         depate.manager=user
@@ -62,6 +65,13 @@ def depatementSave(request):
         user.person.depate=depate
         user.person.save()
         user.save()
+    else:
+        if depate.manager:
+            if depate.manager.person.depate:
+                depate.manager.person.depate=None
+                depate.manager.person.save()
+            depate.manager=None
+            depate.save()
 
     return getResult(True,msg,depate.id)
 
