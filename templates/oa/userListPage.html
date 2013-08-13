@@ -115,11 +115,11 @@
     {% if u.person.depate  %}
         {% if u.person.depate.manager %}
             {% if u.department_manager  %}
-                {% ifequal u.department_manager.pk u.person.depate.pk %}
-                    自己
+                {% if u.person.depate and u.person.depate.fatherDepart %}
+                    {{ u.person.depate.fatherDepart.manager.get_full_name }}:{{ u.person.depate.fatherDepart.name }}
                 {% else %}
-                    {{ u.person.depate.manager.get_full_name }}:{{ u.person.depate.name }}
-                {% endifequal %}
+
+                {% endif %}
             {% else %}
                     {{ u.person.depate.manager.get_full_name }}:{{ u.person.depate.name }}
             {% endif %}
@@ -131,7 +131,7 @@
     {% endif %}
 </td>
 <td width="80px">{% if u.department_manager %}{{ u.department_manager.name }}{% else %}{% endif %}</td>
-<td width="100px" id="deviceid{{ u.pk }}">{% if u.person.deviceid %}{{ u.person.deviceid }}{% else %}空{% endif %}</td>
+<td width="100px" id="deviceid{{ u.pk }}" style="font-size: 9px;">{% if u.person.deviceid %}{{ u.person.deviceid }}{% else %}空{% endif %}</td>
 <td width="90px"><a href="javascript:deluser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');" id="del{{ u.id }}" {%if not u.is_active %}style="display: none;" {% endif %} >在职状态</a><a href="javascript:openuser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');" id="open{{ u.id }}" {% if u.is_active %} style="display: none;" {% endif %}><span style="color: red;">离职状态</span></a></td>
 <td>
     <a href="/oa/userAdd/?userid={{ u.id }}" target="mainFrame" title="更新"><img src="{{ STATIC_URL }}image/update.gif" border="0"/></a>
