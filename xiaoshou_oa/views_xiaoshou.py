@@ -266,6 +266,7 @@ def userXiaoShouOrderUpdate(request):
     order.tel = tel
     order.orderNumber = orderNumber
 
+
     order.save()
     for g in Gift.objects.filter(flag__in=productgifts):
         order.gift.add(g)

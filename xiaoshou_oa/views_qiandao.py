@@ -427,6 +427,7 @@ def userqiandaoUploadClient(request):
     userQianDao = UserQianDao()
     userQianDao.user = user
     userQianDao.qiandao = qiandao
+    # userQianDao.dateTime=datetime.datetime.utcnow()
     if gps:
         userQianDao.gps = gps
     if address:

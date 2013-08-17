@@ -1,15 +1,12 @@
 #coding=utf-8
 # Create your views here.
 import json
-import datetime
 
-from django.contrib.auth.decorators import login_required
-from django.http import Http404, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from xiaoshou_oa.models import DocumentKind, Document, DocumentImage
-from xiaoshou_oa.tools import getResult, client_login_required
+from xiaoshou_oa.tools import getResult
 
+import datetime
+timezone=datetime.timedelta(hours =8)
 
 def getAllMenu(request):
     '''
