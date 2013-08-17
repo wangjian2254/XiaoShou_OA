@@ -1,19 +1,17 @@
 #coding=utf-8
 # Create your views here.
-import json
 
-import datetime
-import urllib
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from XiaoShouOA import settings
 from xiaoshou_oa.models import QianDao, UserQianDao, Office, Person, Depatement
 from xiaoshou_oa.tools import getResult, permission_required, client_login_required
 from django.contrib.auth.models import User
 from xiaoshou_oa.views_xiaoshou import getDepartmentByDepartment
 
+import datetime
+timezone=datetime.timedelta(hours =8)
 
 @login_required
 @permission_required
@@ -135,7 +133,7 @@ def qiandaoList(request):
 @login_required
 @permission_required
 def userQianDaoList(request):
-    return render_to_response('oa/userqiandaoList.html', RequestContext(request, { 'depatementlist':Depatement.objects.all(), 'qiandaolist':QianDao.objects.all(), 'today':datetime.datetime.now()}))
+    return render_to_response('oa/userqiandaoList.html', RequestContext(request, { 'depatementlist':Depatement.objects.all(), 'qiandaolist':QianDao.objects.all(), 'today':datetime.datetime.utcnow()+timezone}))
 
 
 def queryRecord(users,qiandao,startdate,enddate,dategroup):
@@ -203,8 +201,8 @@ def userQianDaoQuery(request):
     startdate = request.REQUEST.get('startdate')
     enddate = request.REQUEST.get('enddate')
     if not startdate or not enddate:
-        startdate=datetime.datetime.now().strftime('%Y-%m-%d')
-        enddate=datetime.datetime.now().strftime('%Y-%m-%d')
+        startdate=(datetime.datetime.utcnow()+timezone).strftime('%Y-%m-%d')
+        enddate=(datetime.datetime.utcnow()+timezone).strftime('%Y-%m-%d')
     filename+='%s_%s'%(startdate,enddate)
     startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
@@ -218,7 +216,7 @@ def userQianDaoQuery(request):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)
 
-        users=[]
+        users=[request.user]
         for u in Person.objects.filter(depate__in=d):
             users.append(u.user)
     else:
@@ -355,8 +353,8 @@ def userQianDaoQueryClient(request):
     startdate = request.REQUEST.get('startdate','2013-07-01')
     enddate = request.REQUEST.get('enddate','2013-07-29')
     if not startdate or not enddate:
-        startdate=datetime.datetime.now().strftime('%Y-%m-%d')
-        enddate=datetime.datetime.now().strftime('%Y-%m-%d')
+        startdate=(datetime.datetime.utcnow()+timezone).strftime('%Y-%m-%d')
+        enddate=(datetime.datetime.utcnow()+timezone).strftime('%Y-%m-%d')
     startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
     user=request.user
@@ -371,7 +369,7 @@ def userQianDaoQueryClient(request):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)
 
-        users=[]
+        users=[request.user]
         for u in Person.objects.filter(depate__in=d):
             users.append(u.user)
     else:
@@ -437,7 +435,6 @@ def userqiandaoUploadClient(request):
         userQianDao.office=Office.objects.get(pk=officeid)
     else:
         return getResult(False,u'请选择签到厅台信息')
-    userQianDao.dateTime=datetime.datetime.now()
     userQianDao.save()
     return getResult(True, u'提交签到信息成功',{'time':userQianDao.dateTime.strftime("%Y-%m-%d %H:%M:%S"),'id':id})
 

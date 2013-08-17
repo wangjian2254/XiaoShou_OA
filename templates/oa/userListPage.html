@@ -112,8 +112,8 @@
 <td width="50px">{%if u.person.sex %}女{% else %}男{% endif %}</td>
 <td width="100px">{{ u.person.tel }}</td>
 <td width="80px">
-    {% if u.person.depate  %}
-        {% if u.person.depate.manager %}
+{#    {% if u.person.depate  %}#}
+{#        {% if u.person.depate.manager %}#}
             {% if u.department_manager  %}
                 {% if u.person.depate and u.person.depate.fatherDepart %}
                     {{ u.person.depate.fatherDepart.manager.get_full_name }}:{{ u.person.depate.fatherDepart.name }}
@@ -123,12 +123,12 @@
             {% else %}
                     {{ u.person.depate.manager.get_full_name }}:{{ u.person.depate.name }}
             {% endif %}
-        {% else %}
-            {{ u.person.depate.name }}
-        {% endif %}
-    {% else %}
-
-    {% endif %}
+{#        {% else %}#}
+{#            {{ u.person.depate.name }}#}
+{#        {% endif %}#}
+{#    {% else %}#}
+{##}
+{#    {% endif %}#}
 </td>
 <td width="80px">{% if u.department_manager %}{{ u.department_manager.name }}{% else %}{% endif %}</td>
 <td width="100px" id="deviceid{{ u.pk }}" style="font-size: 9px;">{% if u.person.deviceid %}{{ u.person.deviceid }}{% else %}空{% endif %}</td>

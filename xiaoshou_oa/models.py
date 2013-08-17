@@ -73,7 +73,7 @@ class QianDao(models.Model):
 class UserQianDao(models.Model):
     user = models.ForeignKey(User, verbose_name=u'签到人', help_text=u'发出签到信息的用户')
     qiandao = models.ForeignKey(QianDao, verbose_name=u'签到项目', help_text=u'进行签到的项目，上班、下班等等')
-    dateTime = models.DateTimeField(auto_created=True, verbose_name=u'签到发生时间', help_text=u'提交到服务器上的时间')
+    dateTime = models.DateTimeField(default=datetime.datetime.utcnow,auto_created=True, verbose_name=u'签到发生时间', help_text=u'提交到服务器上的时间')
     gps = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'gps信息', help_text=u'手机端获取的gps信息')
     office = models.ForeignKey(Office, blank=True, null=True, verbose_name=u'签到厅台', help_text=u'签到的位置')
     address = models.CharField(blank=True, null=True, max_length=100, verbose_name=u'街道地址', help_text=u'根据gps获取的街道信息')
@@ -123,7 +123,7 @@ class DocumentKind(models.Model):
 class Document(models.Model):
     title = models.CharField(max_length=100, verbose_name=u'文档标题', help_text=u'文档的标题')
     kind = models.ForeignKey(DocumentKind, verbose_name=u'文档分类')
-    dateTime = models.DateTimeField(default=datetime.datetime.now,auto_created=True, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
+    dateTime = models.DateTimeField(default=datetime.datetime.utcnow,auto_created=True, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
     author = models.ForeignKey(User,default='request.user', verbose_name=u'作者', help_text=u'创建文档的人')
     show = models.IntegerField(default=1, verbose_name=u'浏览次数', help_text=u'浏览文档的次数')
     content = models.TextField(blank=True, null=True, verbose_name=u'文档内容', help_text=u'文档内容的段')
@@ -166,7 +166,7 @@ class Choice(models.Model):
 
 class Examination(models.Model):
     name = models.CharField(max_length=30, verbose_name=u'考试名称', help_text=u'给考试起个名字，方便查询')
-    dateTime = models.DateTimeField(auto_created=True,default=datetime.datetime.now, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
+    dateTime = models.DateTimeField(auto_created=True,default=datetime.datetime.utcnow, verbose_name=u'创建时间', help_text=u'提交到服务器上的时间')
     joins = models.ManyToManyField(Person, verbose_name=u'参与考试的用户', help_text=u'参与考试的员工')
     topics = models.ManyToManyField(Topic, verbose_name=u'试卷的考题', help_text=u'组成试卷的考题')
     time = models.IntegerField(default=20,verbose_name=u'考试时间', help_text=u'单位为分钟')

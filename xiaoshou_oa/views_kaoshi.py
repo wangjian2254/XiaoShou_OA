@@ -1,7 +1,6 @@
 #coding=utf-8
 # Create your views here.
 import json
-import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -224,7 +223,7 @@ def getScoreDetailQuery(request):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)
 
-        users = []
+        users = [request.user]
         for u in Person.objects.filter(depate__in=d):
             users.append(u.user)
 
@@ -282,7 +281,7 @@ def getScoreClient(request):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)
 
-        users = []
+        users = [request.user]
         for u in Person.objects.filter(depate__in=d):
             users.append(u.user)
 

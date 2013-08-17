@@ -1,7 +1,5 @@
 #coding=utf-8
 # Create your views here.
-import json
-import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseRedirect
@@ -9,9 +7,10 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from xiaoshou_oa.models import  Office, Depatement, UserQianDao
 from xiaoshou_oa.tools import getResult, permission_required, client_login_required
-from django.contrib.auth.models import User
 
 
+import datetime
+timezone=datetime.timedelta(hours =8)
 
 @login_required
 @permission_required
@@ -159,7 +158,7 @@ def calculateOffice(request):
     id = request.REQUEST.get('officeid')
     date = request.REQUEST.get('enddate')
     if  not date:
-        date = datetime.datetime.now().strftime('%Y-%m-%d')
+        date = (datetime.datetime.utcnow()+timezone).strftime('%Y-%m-%d')
     startdate = datetime.datetime.strptime(date+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     enddate = datetime.datetime.strptime(date+' 23:59:59', '%Y-%m-%d %H:%M:%S')
 

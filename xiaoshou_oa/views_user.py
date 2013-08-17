@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from xiaoshou_oa.models import Person, Depatement
-from xiaoshou_oa.tools import getResult, permission_required
+from xiaoshou_oa.tools import getResult, permission_required, client_login_required
+from xiaoshou_oa.views_xiaoshou import getDepartmentByDepartment
 
 
 @login_required
@@ -217,3 +218,30 @@ def clientLogin(request):
             return getResult(True,u'登录成功')
         else:
             return getResult(False,u'用户名密码错误')
+
+
+
+@client_login_required
+def userListClient(request):
+    '''
+    手机查询 用户下属
+    '''
+
+    user = request.user
+    if hasattr(user,'department_manager'):
+        d = []
+        depatement = user.department_manager
+        d.append(depatement)
+        for i in range(5):
+            for depat in getDepartmentByDepartment(d):
+                d.append(depat)
+
+        users = [request.user]
+        for u in Person.objects.filter(depate__in=d):
+            users.append(u.user)
+    else:
+        users = [user]
+    l=[]
+    for u in users:
+        l.append({'fullname':u.get_full_name(),'id':u.pk,'username':u.username,'allname':u'%s:%s'%(u.username,u.get_full_name())})
+    return getResult(True,u'获取到所有下属',l)

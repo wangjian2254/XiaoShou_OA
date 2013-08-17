@@ -28,7 +28,7 @@ def userXiaoShouList(request):
                                                                           'today': datetime.datetime.now()}))
 
 
-def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, giftid):
+def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, giftid,officeids=None):
     query = ProductOrder.objects.filter(user__in=users).filter(product__in=product)
     query = query.filter(clientDate__gte=startdate).filter(clientDate__lte=enddate)
     if productTypeid:
@@ -37,6 +37,8 @@ def queryRecord(users, product, startdate, enddate, dategroup, productTypeid, gi
     if giftid:
         gifts = Gift.objects.filter(pk__in=giftid)
         query = query.filter(gift__in=gifts)
+    if officeids:
+        query=query.filter(office__in=officeids)
     query = query.order_by('clientDate').order_by('clientTime').order_by('office').order_by('user')
 
     # datadict={}
@@ -136,7 +138,7 @@ def userProductOrderQuery(request):
             for depat in getDepartmentByDepartment(d):
                 d.append(depat)
 
-        users = []
+        users = [request.user]
         for u in Person.objects.filter(depate__in=d):
             users.append(u.user)
 
@@ -277,6 +279,8 @@ def userProductOrderClient(request):
     '''
     手机查询 销售统计信息
     '''
+    userids = request.REQUEST.getlist('userids')
+    officeids = request.REQUEST.getlist('officeids')
     productTypeid = request.REQUEST.getlist('productTypeid')
     productBrandsid = request.REQUEST.getlist('productBrandsid')
     productModelid = request.REQUEST.getlist('productModelid')
@@ -287,20 +291,24 @@ def userProductOrderClient(request):
         enddate = datetime.datetime.now().strftime('%Y-%m-%d')
         # startdate = datetime.datetime.strptime(startdate+' 00:00:00', '%Y-%m-%d %H:%M:%S')
     # enddate = datetime.datetime.strptime(enddate+' 23:59:59', '%Y-%m-%d %H:%M:%S')
-    user = request.user
-    if hasattr(user,'department_manager'):
-        d = []
-        depatement = user.department_manager
-        d.append(depatement)
-        for i in range(5):
-            for depat in getDepartmentByDepartment(d):
-                d.append(depat)
+    if not userids:
+        user = request.user
+        if hasattr(user,'department_manager'):
+            d = []
+            depatement = user.department_manager
+            d.append(depatement)
+            for i in range(5):
+                for depat in getDepartmentByDepartment(d):
+                    d.append(depat)
 
-        users = []
-        for u in Person.objects.filter(depate__in=d):
-            users.append(u.user)
+            users = [request.user]
+            for u in Person.objects.filter(depate__in=d):
+                users.append(u.user)
+        else:
+            users = [user]
     else:
-        users = [user]
+        users=User.objects.filter(pk__in=userids)
+
     if productModelid:
         productmodels = ProductModel.objects.filter(pk__in=productModelid)
         # product=Product.objects.filter(brands__in=productmodels)
@@ -310,9 +318,12 @@ def userProductOrderClient(request):
         # product=Product.objects.filter(brands__in=productmodels)
     else:
         productmodels = ProductModel.objects.all()
+    officelist=[]
+    if officeids:
+        officelist=Office.objects.filter(pk__in=officeids)
 
     dategroup = []
-    queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, None)
+    queryRecord(users, productmodels, startdate, enddate, dategroup, productTypeid, None,officelist)
     resultList=[]
     for data in dategroup:
         resultList.append({'date':u'日期：%s   厅台：%s   总计：%s 台' % (data['date'], data['officename'],data['totalnum'])})
@@ -321,54 +332,7 @@ def userProductOrderClient(request):
             resultList.append(mapdata)
     return getResult(True, u'获取数据成功', resultList)
 
-#
-#
-# @client_login_required
-# def userProductOrderUploadClient(request):
-#     '''
-#     手机端提交签到信息
-#     '''
-#     user=request.user
-#     id = request.REQUEST.get('qiandaoid')
-#     if id:
-#         try:
-#             qiandao = QianDao.objects.get(pk=id)
-#         except:
-#             return getResult(False, u'签到服务不存在')
-#     else:
-#         return getResult(False, u'请传递签到服务id')
-#     gps = request.REQUEST.get('gps')
-#     if gps=='null,null':
-#         return getResult(False, u'GPS信息不正确')
-#     address = request.REQUEST.get('address')
-#     officeid = request.REQUEST.get('officeid')
-#     userQianDao = UserQianDao()
-#     userQianDao.user = user
-#     userQianDao.qiandao = qiandao
-#     if gps:
-#         userQianDao.gps = gps
-#     if address:
-#         userQianDao.address = address
-#     if officeid:
-#         userQianDao.office=Office.objects.get(pk=officeid)
-#     else:
-#         return getResult(False,u'请选择签到厅台信息')
-#     userQianDao.dateTime=datetime.datetime.now()
-#     userQianDao.save()
-#     return getResult(True, u'提交签到信息成功',{'time':userQianDao.dateTime.strftime("%Y-%m-%d %H:%M:%S"),'id':id})
-#
-#
-#
-# @client_login_required
-# def qiandaoListClient(request):
-#     l = []
-#     for qiandao in QianDao.objects.all():
-#         if qiandao.isdel:
-#             l.append({'id':qiandao.id, 'isdel':qiandao.isdel})
-#         else:
-#             l.append({'id':qiandao.id, 'name':qiandao.name, 'needTime':qiandao.needTime, 'needGPS':qiandao.needGPS, 'needAddress':qiandao.needAddress, 'isdel':qiandao.isdel})
-#
-#     return getResult(True, u'更新签到服务成功', l)
+
 
 
 
