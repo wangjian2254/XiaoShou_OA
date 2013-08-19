@@ -11,7 +11,6 @@
 <body onLoad=""  style="background:#ececec">
 {% endblock %}
 {% block navigator %}
-<a  href="/userInfo">用户信息列表</a> >><a  href="/userAdd">添加新用户</a>  >> <a href="javascript:history.back(-1);">后退</a>
 {% endblock %}
 {% block content %}
 <form id="register"  method="post" action="/userAdd" onSubmit="checkTrue()">
@@ -24,12 +23,10 @@
 {#    {% endfor %}#}
 <div style="width: 100%;display: block;float: left;margin: 5px;text-align: left;">
 <p style="width: 100%;float: left;">常用功能：</p>
-<p style="float: left;margin:10px;"><a href="#">签到导出</a></p>
-<p style="float: left;margin:10px;"><a href="#">考试导出</a></p>
-<p style="float: left;margin:10px;"><a href="#">销售导出</a></p>
-<p style="width: 100%;float: left;">运行参数：</p>
-<p style="width: 100%;margin:10px;float: left;">今日参与销售员工数量：86人</p>
-<p style="width: 100%;margin:10px;float: left;">今日销售终端数量：816台</p>
+<p style="float: left;margin:10px;"><a href="/oa/userQianDaoList/">签到导出</a></p>
+<p style="float: left;margin:10px;"><a href="/oa/getScoreQuery/">考试导出</a></p>
+<p style="float: left;margin:10px;"><a href="/oa/userXiaoShouList/">销售导出</a></p>
+
 
 </div>
 </div>
