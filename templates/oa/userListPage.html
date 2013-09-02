@@ -135,7 +135,7 @@
 <td width="90px"><a href="javascript:deluser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');" id="del{{ u.id }}" {%if not u.is_active %}style="display: none;" {% endif %} >在职状态</a><a href="javascript:openuser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');" id="open{{ u.id }}" {% if u.is_active %} style="display: none;" {% endif %}><span style="color: red;">离职状态</span></a></td>
 <td>
     <a href="/oa/userAdd/?userid={{ u.id }}" target="mainFrame" title="更新"><img src="{{ STATIC_URL }}image/update.gif" border="0"/></a>
-    <a href="javascript:passworduser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');"  title="重置密码"><img src="{{ STATIC_URL }}image/p3.gif" border="0"/></a>
+    <a href="/oa/userPWD_get/?userid={{ u.id }}"  target="mainFrame"   title="重置密码"><img src="{{ STATIC_URL }}image/p3.gif" border="0"/></a>
     <a href="javascript:deviceiduser('{{ u.username }}','{{ u.get_full_name }}','{{ u.id }}');"  title="重置设备指纹"><img src="{{ STATIC_URL }}image/phone.jpg" width="20" border="0"/></a>
 </td>
 </tr>

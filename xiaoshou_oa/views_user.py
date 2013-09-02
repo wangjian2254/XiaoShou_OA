@@ -151,6 +151,37 @@ def userPassword(request):
 
 @login_required
 @permission_required
+def userPWD_get(request):
+    '''
+    修改用户密码
+    '''
+    id = request.REQUEST.get('userid')
+    user = {}
+    if id:
+        user = User.objects.get(pk=id)
+    return render_to_response('oa/userPWD.html', RequestContext(request, {'person': user}))
+
+
+@login_required
+@permission_required
+def userPWD(request):
+    '''
+    离职用户
+    '''
+    id = request.REQUEST.get('userid')
+    password = request.REQUEST.get('password')
+    if id:
+        try:
+            user = User.objects.get(pk=id)
+            user.set_password(password)
+            user.save()
+            return getResult(True, u'重置用户密码成功')
+        except:
+            return getResult(False, u'用户不存在')
+    return getResult(False, u'请传递用户id')
+
+@login_required
+@permission_required
 def userDeviceid(request):
     '''
     重置用户设备
